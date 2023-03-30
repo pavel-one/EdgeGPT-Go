@@ -64,7 +64,7 @@ func NewGPT(conf *config.GPT) (*GPT, error) {
 func (g *GPT) createConversation() error {
 	req, err := http.NewRequest("GET", g.Config.ConversationUrl.String(), nil)
 
-	for k, v := range g.Config.HeadersConver {
+	for k, v := range g.Config.Headers {
 		req.Header.Set(k, v)
 	}
 
