@@ -21,6 +21,10 @@ func (c *Hub) initialHandshake() error {
 		return err
 	}
 
+	if _, _, err := c.conn.ReadMessage(); err != nil { //wait initial
+		return err
+	}
+
 	c.InvocationId = 0
 
 	go c.worker()
@@ -63,7 +67,7 @@ func (c *Hub) Close() {
 
 func (c *Hub) getRequest(message string) map[string]any {
 	m := map[string]any{
-		"invocationId": c.InvocationId,
+		"invocationId": string(rune(c.InvocationId)),
 		"target":       "chat",
 		"type":         4,
 		"arguments": []map[string]any{
