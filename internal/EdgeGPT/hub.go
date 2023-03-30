@@ -6,12 +6,14 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
+	"sync"
 )
 
 type Hub struct {
 	conversation *Conversation
 	conn         *websocket.Conn
 	InvocationId int
+	mu           sync.Mutex
 }
 
 func (c *Hub) initialHandshake() error {
@@ -27,12 +29,12 @@ func (c *Hub) initialHandshake() error {
 
 	c.InvocationId = 0
 
-	go c.worker()
-
 	return nil
 }
 
 func (c *Hub) send(message string) error {
+	c.mu.Lock() //TODO: UNLOCK THIS
+
 	m, err := json.Marshal(c.getRequest(message))
 	if err != nil {
 		return err
@@ -47,21 +49,19 @@ func (c *Hub) send(message string) error {
 	return nil
 }
 
-func (c *Hub) worker() {
-	// читаем ответы от сервера
+func (c *Hub) Worker() {
 	for {
 		messageType, message, err := c.conn.ReadMessage()
 		if err != nil {
-			// обработка ошибки
 			log.Println("Ошибка чтения сообщения:", err)
 			return
 		}
 		fmt.Printf("Получено сообщение типа %d: %s\n", messageType, message)
 	}
+	c.mu.Unlock()
 }
 
 func (c *Hub) Close() {
-	//c.InvocationId = 0 TODO: ?
 	c.conn.Close()
 }
 
