@@ -4,6 +4,7 @@ import (
 	"EdgeGPT-Go/config"
 	"EdgeGPT-Go/internal/EdgeGPT"
 	"log"
+	"time"
 )
 
 func main() {
@@ -17,10 +18,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	c, err := gpt.NewConversation()
+	err = gpt.Ask("Привет, ты живой?")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	log.Println(c)
+	time.Sleep(time.Minute * 5)
 }

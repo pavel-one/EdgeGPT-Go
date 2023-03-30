@@ -1,12 +1,14 @@
 package helpers
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"encoding/hex"
+	mrand "math/rand"
 	"net/http"
 )
 
 func RandInt(min int, max int) int {
-	return rand.Intn(max-min+1) + min
+	return mrand.Intn(max-min+1) + min
 }
 
 func MapToCookies(m []map[string]any) []*http.Cookie {
@@ -25,4 +27,28 @@ func MapToCookies(m []map[string]any) []*http.Cookie {
 	}
 
 	return cookies
+}
+
+func GetHeaders(m map[string]string) http.Header {
+	headers := http.Header{}
+
+	for k, v := range m {
+		headers.Set(k, v)
+	}
+
+	return headers
+}
+
+//func RandomHex(length int) string {
+//	bytes := make([]byte, length)
+//	io.ReadFull(rand.Reader, bytes)
+//	hexString := hex.EncodeToString(bytes)
+//
+//	return hexString
+//}
+
+func RandomHex(length int) string {
+	buf := make([]byte, length/2)
+	rand.Read(buf)
+	return hex.EncodeToString(buf)
 }

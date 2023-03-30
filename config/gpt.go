@@ -13,7 +13,6 @@ type GPT struct {
 	WssUrl          *url.URL
 	CookieFileName  string
 	TimeoutRequest  time.Duration
-	Delimiter       string
 	Headers         map[string]string
 	HeadersConver   map[string]string
 }
@@ -45,7 +44,6 @@ func NewGpt() (*GPT, error) {
 		WssUrl:          wss,
 		CookieFileName:  "cookies.json", //TODO: construct
 		TimeoutRequest:  time.Second * 30,
-		Delimiter:       "\x1e",
 		Headers: map[string]string{
 			"accept":                      "application/json",
 			"accept-language":             "en-US,en;q=0.9",
