@@ -1,21 +1,26 @@
 package main
 
 import (
+	"EdgeGPT-Go/config"
 	"EdgeGPT-Go/internal/EdgeGPT"
 	"log"
 )
 
 func main() {
-	c, err := EdgeGPT.NewConversation()
+	conf, err := config.NewGpt()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	get, err := c.Get()
+	gpt, err := EdgeGPT.NewGPT(conf)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	resp := string(get)
 
-	log.Println(resp)
+	c, err := gpt.NewConversation()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(c)
 }

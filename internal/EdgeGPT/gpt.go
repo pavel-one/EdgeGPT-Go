@@ -1,65 +1,81 @@
 package EdgeGPT
 
 import (
+	"EdgeGPT-Go/config"
 	"EdgeGPT-Go/internal/helpers"
+	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
+	"io"
+	"net/http"
+	"os"
 )
 
-var uid, _ = uuid.NewUUID()
-var FORWARDED_IP = fmt.Sprintf(
-	"13.%d.%d.%d",
-	helpers.RandInt(104, 107),
-	helpers.RandInt(0, 255),
-	helpers.RandInt(0, 255))
-
-var HEADERS = map[string]string{
-	"accept":                      "application/json",
-	"accept-language":             "en-US,en;q=0.9",
-	"content-type":                "application/json",
-	"sec-ch-ua":                   "\"Not_A Brand\";v=\"99\", \"Microsoft Edge\";v=\"110\", \"Chromium\";v=\"110\"",
-	"sec-ch-ua-arch":              "\"x86\"",
-	"sec-ch-ua-bitness":           "\"64\"",
-	"sec-ch-ua-full-version":      "\"109.0.1518.78\"",
-	"sec-ch-ua-full-version-list": "\"Chromium\";v=\"110.0.5481.192\", \"Not A(Brand\";v=\"24.0.0.0\", \"Microsoft Edge\";v=\"110.0.1587.69\"",
-	"sec-ch-ua-mobile":            "?0",
-	"sec-ch-ua-model":             "",
-	"sec-ch-ua-platform":          "\"Windows\"",
-	"sec-ch-ua-platform-version":  "\"15.0.0\"",
-	"sec-fetch-dest":              "empty",
-	"sec-fetch-mode":              "cors",
-	"sec-fetch-site":              "same-origin",
-	"x-ms-client-request-id":      uid.String(),
-	"x-ms-useragent":              "azsdk-js-api-client-factory/1.0.0-beta.1 core-rest-pipeline/1.10.0 OS/Win32",
-	"Referer":                     "https://www.bing.com/search?q=Bing+AI&showconv=1&FORM=hpcodx",
-	"Referrer-Policy":             "origin-when-cross-origin",
-	"x-forwarded-for":             FORWARDED_IP,
+type GPT struct {
+	Config  *config.GPT
+	client  *http.Client
+	cookies []*http.Cookie
 }
 
-var HEADERS_INIT_CONVER = map[string]string{
-	"authority":                   "edgeservices.bing.com",
-	"accept":                      "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-	"accept-language":             "ru-RU,ru;q=0.9",
-	"cache-control":               "max-age=0",
-	"sec-ch-ua":                   "\"Chromium\";v=\"110\", \"Not A(Brand\";v=\"24\", \"Microsoft Edge\";v=\"110\"",
-	"sec-ch-ua-arch":              "\"x86\"",
-	"sec-ch-ua-bitness":           "\"64\"",
-	"sec-ch-ua-full-version":      "\"110.0.1587.69\"",
-	"sec-ch-ua-full-version-list": "\"Chromium\";v=\"110.0.5481.192\", \"Not A(Brand\";v=\"24.0.0.0\", \"Microsoft Edge\";v=\"110.0.1587.69\"",
-	"sec-ch-ua-mobile":            "?0",
-	"sec-ch-ua-model":             "\"\"",
-	"sec-ch-ua-platform":          "\"Windows\"",
-	"sec-ch-ua-platform-version":  "\"15.0.0\"",
-	"sec-fetch-dest":              "document",
-	"sec-fetch-mode":              "navigate",
-	"sec-fetch-site":              "none",
-	"sec-fetch-user":              "?1",
-	"upgrade-insecure-requests":   "1",
-	"user-agent":                  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.69",
-	"x-edge-shopping-flag":        "1",
-	"x-forwarded-for":             "1.1.1.1",
+func NewGPT(conf *config.GPT) (*GPT, error) {
+	cookieFile, err := os.Open(conf.CookieFileName)
+	if err != nil {
+		return nil, err
+	}
+	defer cookieFile.Close()
+
+	cookiesJSON, err := io.ReadAll(cookieFile)
+	if err != nil {
+		return nil, err
+	}
+
+	var parse []map[string]any
+	err = json.Unmarshal(cookiesJSON, &parse)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GPT{
+		Config:  conf,
+		cookies: helpers.MapToCookies(parse),
+		client: &http.Client{
+			Timeout: conf.TimeoutRequest,
+		},
+	}, nil
 }
 
-const DELIMITER = "\x1e"
+func (g *GPT) NewConversation() (*Conversation, error) {
+	req, err := http.NewRequest("GET", g.Config.ConversationUrl.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
-const BING_PROXY_URL = "https://edgeservices.bing.com/edgesvc/turing/conversation/create"
+	for _, cookie := range g.cookies {
+		req.AddCookie(cookie)
+	}
+
+	resp, err := g.client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code not ok: %d, %s", resp.StatusCode, resp.Status)
+	}
+
+	r, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	conversation := new(Conversation)
+	if err := json.Unmarshal(r, conversation); err != nil {
+		return nil, err
+	}
+
+	if conversation.Result.Value.ValueOrZero() != "Success" {
+		return nil, fmt.Errorf("not valid cookies: %s", conversation.Result.Message.ValueOrZero())
+	}
+
+	return conversation, nil
+}
