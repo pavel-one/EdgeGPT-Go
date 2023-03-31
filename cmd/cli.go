@@ -29,7 +29,7 @@ func main() {
 		log.Println(mw.Answer.GetAnswer())
 	}
 
-	as, err := gpt.AskSync("Какая погода в Ростове-на-Дону?")
+	as, err := gpt.AskSync("Покажи пример сокетов на golang gorilla")
 	if err != nil {
 		log.Fatalln(err)
 	}
