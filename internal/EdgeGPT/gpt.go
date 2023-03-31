@@ -25,6 +25,7 @@ type GPT struct {
 	client       *http.Client
 	cookies      []*http.Cookie
 	Conversation *Conversation
+	Hub          *Hub
 }
 
 func NewGPT(conf *config.GPT) (*GPT, error) {
@@ -54,6 +55,11 @@ func NewGPT(conf *config.GPT) (*GPT, error) {
 	}
 
 	if err := gpt.createConversation(); err != nil {
+		return nil, err
+	}
+
+	gpt.Hub, err = gpt.createHub()
+	if err != nil {
 		return nil, err
 	}
 
@@ -105,21 +111,33 @@ func (g *GPT) createConversation() error {
 	return nil
 }
 
-func (g *GPT) Ask(message string) error {
+func (g *GPT) AskAsync(message string) (*MessageWrapper, error) {
 	if len(message) > 2000 {
-		return fmt.Errorf("message very long, max: %d", 2000)
+		return nil, fmt.Errorf("message very long, max: %d", 2000)
 	}
 
-	hub, err := g.createHub()
+	return g.Hub.send(message)
+}
+
+func (g *GPT) AskSync(message string) (*MessageWrapper, error) {
+	if len(message) > 2000 {
+		return nil, fmt.Errorf("message very long, max: %d", 2000)
+	}
+
+	m, err := g.Hub.send(message)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if err := hub.send(message); err != nil {
-		return err
+	go m.Worker()
+
+	for _ = range m.Chan {
+		if m.Final {
+			break
+		}
 	}
 
-	return nil
+	return m, nil
 }
 
 func (g *GPT) createHub() (*Hub, error) {

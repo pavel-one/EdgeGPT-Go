@@ -1,8 +1,29 @@
 package EdgeGPT
 
 import (
+	"encoding/json"
+	"github.com/gorilla/websocket"
+	"sync"
 	"time"
 )
+
+const (
+	TypeUpdate float64 = 1
+	TypeFinish float64 = 2
+)
+
+type UpdateResponse struct {
+	Type      int    `json:"type"`
+	Target    string `json:"target"`
+	Arguments []struct {
+		Cursor struct {
+			J string `json:"j"`
+			P int    `json:"p"`
+		} `json:"cursor"`
+		Messages  []MessageResponse `json:"messages"`
+		RequestId string            `json:"requestId"`
+	} `json:"arguments"`
+}
 
 type Suggestion struct {
 	Text        string    `json:"text"`
@@ -38,7 +59,7 @@ type MessageResponse struct {
 
 type Response struct {
 	Type         int    `json:"type"`
-	InvocationId string `json:"invocationId"`
+	InvocationId string `json:"invocationId,omitempty"`
 	Item         struct {
 		Messages               []*MessageResponse `json:"messages"`
 		ConversationExpiryTime time.Time          `json:"conversationExpiryTime,omitempty"`
@@ -49,16 +70,102 @@ type Response struct {
 	} `json:"item"`
 }
 
+func (u *UpdateResponse) GetAnswer() string {
+	arg := u.Arguments[0]
+	if len(arg.Messages) == 0 {
+		return ""
+	}
+
+	message := arg.Messages[len(arg.Messages)-1]
+
+	return message.Text
+}
+
+func (u *UpdateResponse) GetType() int {
+	return u.Type
+}
+
+func (r *Response) GetAnswer() string {
+	item := r.Item
+	if len(item.Messages) == 0 {
+		return ""
+	}
+
+	message := item.Messages[len(item.Messages)-1]
+
+	return message.Text
+}
+
+func (r *Response) GetType() int {
+	return r.Type
+}
+
 type MessageWrapper struct {
 	Final    bool
 	Question string
-	Answer   *MessageResponse
-	ch       chan *MessageResponse
+	Answer   GptResponse
+	Chan     chan []byte
+	mu       *sync.Mutex
+	conn     *websocket.Conn
 }
 
-func NewMessageWrapper(question string) *MessageWrapper {
+func NewMessageWrapper(question string, mutex *sync.Mutex, conn *websocket.Conn) *MessageWrapper {
 	return &MessageWrapper{
 		Question: question,
-		ch:       make(chan *MessageResponse, 1),
+		Chan:     make(chan []byte, 1),
+		mu:       mutex,
+		conn:     conn,
 	}
+}
+
+func (m *MessageWrapper) Worker() error {
+	defer m.mu.Unlock()
+
+	var response map[string]any
+	var updateResponse UpdateResponse
+	var finishResponse Response
+
+	for {
+		var message []byte
+		_, original, err := m.conn.ReadMessage()
+		if err != nil {
+			return err
+		}
+
+		// read to delimiter
+		for _, b := range original {
+			if b == DelimiterByte {
+				break
+			}
+
+			message = append(message, b)
+		}
+
+		if err := json.Unmarshal(message, &response); err != nil {
+			return err
+		}
+
+		switch response["type"] {
+		case TypeUpdate:
+			if err := json.Unmarshal(message, &updateResponse); err != nil {
+				return err
+			}
+
+			m.Answer = &updateResponse
+			break
+		case TypeFinish:
+			if err := json.Unmarshal(message, &finishResponse); err != nil {
+				return err
+			}
+
+			m.Answer = &finishResponse
+			m.Final = true
+			m.Chan <- message
+			close(m.Chan)
+			return nil
+		}
+
+		m.Chan <- message
+	}
+
 }

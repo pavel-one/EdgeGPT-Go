@@ -18,10 +18,23 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	err = gpt.Ask("Привет, ты живой?")
+	mw, err := gpt.AskAsync("Привет, ты живой?")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	go mw.Worker()
+
+	for _ = range mw.Chan {
+		log.Println(mw.Answer.GetAnswer())
+	}
+
+	as, err := gpt.AskSync("Какая погода в Ростове-на-Дону?")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(as.Answer.GetAnswer())
 
 	time.Sleep(time.Minute * 5)
 }
