@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 )
 
 const (
@@ -25,6 +26,7 @@ type GPT struct {
 	client       *http.Client
 	cookies      []*http.Cookie
 	Conversation *Conversation
+	ExpiredAt    time.Time
 	Hub          *Hub
 }
 
@@ -47,8 +49,9 @@ func NewGPT(conf *config.GPT) (*GPT, error) {
 	}
 
 	gpt := &GPT{
-		Config:  conf,
-		cookies: helpers.MapToCookies(parse),
+		Config:    conf,
+		cookies:   helpers.MapToCookies(parse),
+		ExpiredAt: time.Now().Add(time.Minute * 120),
 		client: &http.Client{
 			Timeout: conf.TimeoutRequest,
 		},
