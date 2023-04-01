@@ -6,15 +6,15 @@ import (
 	"log"
 )
 
-type GPTServer struct {
+type Server struct {
 	pb.UnimplementedGptServiceServer
 }
 
-func NewGPTServer() *GPTServer {
-	return &GPTServer{}
+func NewServer() *Server {
+	return &Server{}
 }
 
-func (s *GPTServer) Ask(r *pb.Empty, ss pb.GptService_AskServer) error {
+func (s *Server) Ask(r *pb.Empty, ss pb.GptService_AskServer) error {
 	p, _ := peer.FromContext(ss.Context())
 	log.Printf("Into method %s", p.Addr)
 	return nil

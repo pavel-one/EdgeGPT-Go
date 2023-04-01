@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	srv := GRPC.NewGPTServer()
+	srv := GRPC.NewServer()
 
 	listener, err := net.Listen("tcp", ":8080")
 	if err != nil {
