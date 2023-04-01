@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GptServiceClient interface {
-	Ask(ctx context.Context, in *Empty, opts ...grpc.CallOption) (GptService_AskClient, error)
+	Ask(ctx context.Context, in *AskRequest, opts ...grpc.CallOption) (GptService_AskClient, error)
 }
 
 type gptServiceClient struct {
@@ -33,7 +33,7 @@ func NewGptServiceClient(cc grpc.ClientConnInterface) GptServiceClient {
 	return &gptServiceClient{cc}
 }
 
-func (c *gptServiceClient) Ask(ctx context.Context, in *Empty, opts ...grpc.CallOption) (GptService_AskClient, error) {
+func (c *gptServiceClient) Ask(ctx context.Context, in *AskRequest, opts ...grpc.CallOption) (GptService_AskClient, error) {
 	stream, err := c.cc.NewStream(ctx, &GptService_ServiceDesc.Streams[0], "/gpt.GptService/Ask", opts...)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (c *gptServiceClient) Ask(ctx context.Context, in *Empty, opts ...grpc.Call
 }
 
 type GptService_AskClient interface {
-	Recv() (*StreamResponse, error)
+	Recv() (*AskResponse, error)
 	grpc.ClientStream
 }
 
@@ -57,8 +57,8 @@ type gptServiceAskClient struct {
 	grpc.ClientStream
 }
 
-func (x *gptServiceAskClient) Recv() (*StreamResponse, error) {
-	m := new(StreamResponse)
+func (x *gptServiceAskClient) Recv() (*AskResponse, error) {
+	m := new(AskResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (x *gptServiceAskClient) Recv() (*StreamResponse, error) {
 // All implementations must embed UnimplementedGptServiceServer
 // for forward compatibility
 type GptServiceServer interface {
-	Ask(*Empty, GptService_AskServer) error
+	Ask(*AskRequest, GptService_AskServer) error
 	mustEmbedUnimplementedGptServiceServer()
 }
 
@@ -77,7 +77,7 @@ type GptServiceServer interface {
 type UnimplementedGptServiceServer struct {
 }
 
-func (UnimplementedGptServiceServer) Ask(*Empty, GptService_AskServer) error {
+func (UnimplementedGptServiceServer) Ask(*AskRequest, GptService_AskServer) error {
 	return status.Errorf(codes.Unimplemented, "method Ask not implemented")
 }
 func (UnimplementedGptServiceServer) mustEmbedUnimplementedGptServiceServer() {}
@@ -94,7 +94,7 @@ func RegisterGptServiceServer(s grpc.ServiceRegistrar, srv GptServiceServer) {
 }
 
 func _GptService_Ask_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(Empty)
+	m := new(AskRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func _GptService_Ask_Handler(srv interface{}, stream grpc.ServerStream) error {
 }
 
 type GptService_AskServer interface {
-	Send(*StreamResponse) error
+	Send(*AskResponse) error
 	grpc.ServerStream
 }
 
@@ -110,7 +110,7 @@ type gptServiceAskServer struct {
 	grpc.ServerStream
 }
 
-func (x *gptServiceAskServer) Send(m *StreamResponse) error {
+func (x *gptServiceAskServer) Send(m *AskResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 

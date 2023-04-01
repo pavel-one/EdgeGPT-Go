@@ -12,6 +12,18 @@ const (
 	TypeFinish float64 = 2
 )
 
+type UndefinedResponse struct {
+	Type int `json:"type"`
+}
+
+func (r *UndefinedResponse) GetAnswer() string {
+	return ""
+}
+
+func (r *UndefinedResponse) GetType() int {
+	return r.Type
+}
+
 type UpdateResponse struct {
 	Type      int    `json:"type"`
 	Target    string `json:"target"`
@@ -124,6 +136,7 @@ func (m *MessageWrapper) Worker() error {
 	var response map[string]any
 	var updateResponse UpdateResponse
 	var finishResponse Response
+	var undefinedResponse UndefinedResponse
 
 	for {
 		var message []byte
@@ -163,6 +176,13 @@ func (m *MessageWrapper) Worker() error {
 			m.Chan <- message
 			close(m.Chan)
 			return nil
+
+		default:
+			if err := json.Unmarshal(message, &undefinedResponse); err != nil {
+				return err
+			}
+
+			m.Answer = &undefinedResponse
 		}
 
 		m.Chan <- message

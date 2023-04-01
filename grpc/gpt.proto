@@ -4,14 +4,16 @@ package gpt;
 option go_package="/pkg/GRPC/GPT";
 
 service GptService {
-  rpc Ask(Empty) returns (stream StreamResponse);
+  rpc Ask(AskRequest) returns (stream AskResponse);
 }
 
-message StreamResponse {
+message AskResponse {
   string text = 1;
   uint64 maxUnit = 2;
   uint64 unitUser = 3;
   uint64 ExpiryTime = 4;
 }
 
-message Empty {}
+message AskRequest {
+  string text = 1;
+}
