@@ -48,8 +48,8 @@ func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
 
 		res := &pb.AskResponse{
 			Text:       message.Answer.GetAnswer(),
-			MaxUnit:    0,
-			UnitUser:   0,
+			MaxUnit:    uint64(message.Answer.GetMaxUnit()),
+			UnitUser:   uint64(message.Answer.GetUserUnit()),
 			ExpiryTime: uint64(gpt.ExpiredAt.Unix()),
 		}
 

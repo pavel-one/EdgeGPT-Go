@@ -3,6 +3,8 @@ package EdgeGPT
 type GptResponse interface {
 	GetAnswer() string
 	GetType() int
+	GetMaxUnit() int
+	GetUserUnit() int
 }
 
 type StorageGpt interface {

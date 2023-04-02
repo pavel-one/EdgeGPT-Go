@@ -14,6 +14,7 @@ type Hub struct {
 	mu           sync.Mutex
 }
 
+// initialHandshake request for initial session
 func (c *Hub) initialHandshake() error {
 	message := []byte("{\"protocol\": \"json\", \"version\": 1}" + Delimiter)
 
@@ -30,6 +31,7 @@ func (c *Hub) initialHandshake() error {
 	return nil
 }
 
+// send new message to websocket
 func (c *Hub) send(message string) (*MessageWrapper, error) {
 	c.mu.Lock()
 
@@ -47,10 +49,13 @@ func (c *Hub) send(message string) (*MessageWrapper, error) {
 	return NewMessageWrapper(message, &c.mu, c.conn), nil
 }
 
+// Close hub and connection
+// TODO: Use this!
 func (c *Hub) Close() {
 	c.conn.Close()
 }
 
+// getRequest generate struct for new request websocket
 func (c *Hub) getRequest(message string) map[string]any {
 	m := map[string]any{
 		"invocationId": string(rune(c.InvocationId)),

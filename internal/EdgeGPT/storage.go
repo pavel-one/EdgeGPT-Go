@@ -7,12 +7,14 @@ import (
 	"time"
 )
 
+// Storage for GPT sessions. Use ony for servers
 type Storage map[string]*GPT
 
 func NewStorage() *Storage {
 	return &Storage{}
 }
 
+// GetOrSet get current session, or create new
 func (s *Storage) GetOrSet(key string) (*GPT, error) {
 	var gpt *GPT
 
@@ -36,10 +38,12 @@ func (s *Storage) GetOrSet(key string) (*GPT, error) {
 	return gpt, nil
 }
 
+// Add new session
 func (s *Storage) Add(gpt *GPT, key string) {
 	(*s)[key] = gpt
 }
 
+// Get get current session, or error
 func (s *Storage) Get(key string) (*GPT, error) {
 	v, ok := (*s)[key]
 	if !ok {
@@ -56,6 +60,7 @@ func (s *Storage) Get(key string) (*GPT, error) {
 	return v, nil
 }
 
+// Remove session
 func (s *Storage) Remove(key string) error {
 	so := *s
 	_, ok := so[key]

@@ -30,6 +30,7 @@ type GPT struct {
 	Hub          *Hub
 }
 
+// NewGPT create new service
 func NewGPT(conf *config.GPT) (*GPT, error) {
 	cookieFile, err := os.Open(conf.CookieFileName)
 	if err != nil {
@@ -114,6 +115,27 @@ func (g *GPT) createConversation() error {
 	return nil
 }
 
+/*
+AskAsync getting answer async:
+Example:
+
+	gpt, err := EdgeGPT.NewGPT(conf) //create service
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	mw, err := gpt.AskAsync("Привет, ты живой?") // send ask to gpt
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	go mw.Worker() // Run reading websocket messages
+
+	for _ = range mw.Chan {
+		// update answer
+		log.Println(mw.Answer.GetAnswer())
+	}
+*/
 func (g *GPT) AskAsync(message string) (*MessageWrapper, error) {
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
@@ -122,6 +144,7 @@ func (g *GPT) AskAsync(message string) (*MessageWrapper, error) {
 	return g.Hub.send(message)
 }
 
+// AskSync getting answer sync
 func (g *GPT) AskSync(message string) (*MessageWrapper, error) {
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
@@ -143,6 +166,7 @@ func (g *GPT) AskSync(message string) (*MessageWrapper, error) {
 	return m, nil
 }
 
+// createHub create websocket hub
 func (g *GPT) createHub() (*Hub, error) {
 	if g.Conversation == nil {
 		return nil, errors.New("not set conversation")
