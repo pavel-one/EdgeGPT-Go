@@ -40,6 +40,7 @@ func (s *Storage) GetOrSet(key string) (*GPT, error) {
 
 // Add new session
 func (s *Storage) Add(gpt *GPT, key string) {
+	log.Infoln("New store key:", key)
 	(*s)[key] = gpt
 }
 
@@ -57,11 +58,14 @@ func (s *Storage) Get(key string) (*GPT, error) {
 		return nil, errors.New("session is expired")
 	}
 
+	log.Infoln("Get store:", key)
 	return v, nil
 }
 
 // Remove session
 func (s *Storage) Remove(key string) error {
+	log.Infoln("Store remove:", key)
+
 	so := *s
 	_, ok := so[key]
 	if !ok {

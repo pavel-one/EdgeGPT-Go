@@ -3,13 +3,14 @@ package main
 import (
 	"EdgeGPT-Go/internal/EdgeGPT"
 	"EdgeGPT-Go/internal/GRPC"
+	"EdgeGPT-Go/internal/Logger"
 	pb "EdgeGPT-Go/pkg/GRPC/GPT"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
-	"log"
 	"net"
 )
 
+var log = Logger.NewLogger("General")
 var storage = EdgeGPT.NewStorage()
 var interceptor = func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	p, _ := peer.FromContext(ss.Context())
@@ -33,7 +34,7 @@ func main() {
 		grpc.StreamInterceptor(interceptor),
 	)
 	pb.RegisterGptServiceServer(s, srv)
-	log.Println("Starting server on port 8080")
+	log.Infoln("Starting server on port 8080")
 
 	if err := s.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)

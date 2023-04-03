@@ -11,7 +11,6 @@ import (
 type GPT struct {
 	ConversationUrl *url.URL
 	WssUrl          *url.URL
-	CookieFileName  string
 	TimeoutRequest  time.Duration
 	Headers         map[string]string
 }
@@ -41,7 +40,6 @@ func NewGpt() (*GPT, error) {
 	return &GPT{
 		ConversationUrl: cu,
 		WssUrl:          wss,
-		CookieFileName:  "cookies.json", //TODO: construct
 		TimeoutRequest:  time.Second * 30,
 		Headers: map[string]string{
 			"accept":                      "application/json",

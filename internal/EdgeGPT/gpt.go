@@ -2,6 +2,8 @@ package EdgeGPT
 
 import (
 	"EdgeGPT-Go/config"
+	"EdgeGPT-Go/internal/CookieManager"
+	"EdgeGPT-Go/internal/Logger"
 	"EdgeGPT-Go/internal/helpers"
 	"encoding/json"
 	"errors"
@@ -9,9 +11,10 @@ import (
 	"github.com/gorilla/websocket"
 	"io"
 	"net/http"
-	"os"
 	"time"
 )
+
+var log = Logger.NewLogger("GPT Service")
 
 const (
 	StyleCreative = "h3relaxedimg"
@@ -32,26 +35,14 @@ type GPT struct {
 
 // NewGPT create new service
 func NewGPT(conf *config.GPT) (*GPT, error) {
-	cookieFile, err := os.Open(conf.CookieFileName)
-	if err != nil {
-		return nil, err
-	}
-	defer cookieFile.Close()
-
-	cookiesJSON, err := io.ReadAll(cookieFile)
-	if err != nil {
-		return nil, err
-	}
-
-	var parse []map[string]any
-	err = json.Unmarshal(cookiesJSON, &parse)
+	manager, err := CookieManager.NewManager()
 	if err != nil {
 		return nil, err
 	}
 
 	gpt := &GPT{
 		Config:    conf,
-		cookies:   helpers.MapToCookies(parse),
+		cookies:   helpers.MapToCookies(manager.GetBestCookie()),
 		ExpiredAt: time.Now().Add(time.Minute * 120),
 		client: &http.Client{
 			Timeout: conf.TimeoutRequest,
@@ -62,10 +53,11 @@ func NewGPT(conf *config.GPT) (*GPT, error) {
 		return nil, err
 	}
 
-	gpt.Hub, err = gpt.createHub()
+	hub, err := gpt.createHub()
 	if err != nil {
 		return nil, err
 	}
+	gpt.Hub = hub
 
 	return gpt, nil
 }
@@ -112,6 +104,8 @@ func (g *GPT) createConversation() error {
 
 	g.Conversation = conversation
 
+	log.Infoln("New conversation", conversation)
+
 	return nil
 }
 
@@ -137,10 +131,12 @@ Example:
 	}
 */
 func (g *GPT) AskAsync(message string) (*MessageWrapper, error) {
+
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
 	}
 
+	log.Infoln("New ask:", message)
 	return g.Hub.send(message)
 }
 
@@ -163,6 +159,7 @@ func (g *GPT) AskSync(message string) (*MessageWrapper, error) {
 		}
 	}
 
+	log.Infoln("New ask:", message)
 	return m, nil
 }
 
@@ -186,5 +183,6 @@ func (g *GPT) createHub() (*Hub, error) {
 		return nil, err
 	}
 
+	log.Infoln("New hub for conversation:", g.Conversation.ConversationId)
 	return h, nil
 }
