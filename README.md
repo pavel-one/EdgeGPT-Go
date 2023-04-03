@@ -3,7 +3,6 @@
 
 EdgeGPT-Go is a New Bing unofficial API developed using Golang.  
 You can use it as a library, microservice or standalone cli application.  
-The package supports multiple cookies.
 The package supports multiple cookies. As well as rapid deployment as a microservice via docker.
 
 ## Feature:
