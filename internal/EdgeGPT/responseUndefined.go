@@ -24,3 +24,7 @@ func (r *UndefinedResponse) GetMaxUnit() int {
 func (r *UndefinedResponse) GetUserUnit() int {
 	return 0
 }
+
+func (r *UndefinedResponse) GetSuggestions() []*Suggestion {
+	return nil
+}

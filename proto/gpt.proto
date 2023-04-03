@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package gpt;
-option go_package="/pkg/GRPC/GPT";
+option go_package = "/pkg/GRPC/GPT";
 
 service GptService {
   rpc Ask(AskRequest) returns (stream AskResponse);
@@ -12,6 +12,12 @@ message AskResponse {
   uint64 maxUnit = 2;
   uint64 unitUser = 3;
   uint64 ExpiryTime = 4;
+  bool final = 5;
+  repeated Suggestion suggestions = 6;
+
+  message Suggestion {
+    string text = 1;
+  }
 }
 
 message AskRequest {

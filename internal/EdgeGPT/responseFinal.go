@@ -42,3 +42,14 @@ func (r *FinalResponse) GetMaxUnit() int {
 func (r *FinalResponse) GetUserUnit() int {
 	return r.Item.Throttling.NumUserMessagesInConversation
 }
+
+func (r *FinalResponse) GetSuggestions() []*Suggestion {
+	item := r.Item
+	if len(item.Messages) == 0 {
+		return nil
+	}
+
+	message := item.Messages[len(item.Messages)-1]
+
+	return message.SuggestedResponses
+}

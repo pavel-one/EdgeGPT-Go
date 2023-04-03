@@ -5,6 +5,7 @@ type GptResponse interface {
 	GetType() int
 	GetMaxUnit() int
 	GetUserUnit() int
+	GetSuggestions() []*Suggestion
 }
 
 type StorageGpt interface {

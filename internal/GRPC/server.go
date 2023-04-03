@@ -53,6 +53,14 @@ func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
 			ExpiryTime: uint64(gpt.ExpiredAt.Unix()),
 		}
 
+		suggestions := message.Answer.GetSuggestions()
+		if suggestions != nil {
+			res.Suggestions = make([]*pb.AskResponse_Suggestion, len(suggestions))
+			for i, sug := range suggestions {
+				res.Suggestions[i] = &pb.AskResponse_Suggestion{Text: sug.Text}
+			}
+		}
+
 		if err := stream.Send(res); err != nil {
 			return err
 		}

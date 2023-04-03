@@ -40,3 +40,7 @@ func (u *UpdateResponse) GetMaxUnit() int {
 func (u *UpdateResponse) GetUserUnit() int {
 	return 0
 }
+
+func (u *UpdateResponse) GetSuggestions() []*Suggestion {
+	return nil
+}
