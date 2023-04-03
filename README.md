@@ -1,4 +1,4 @@
-## EdgeGPT-Go
+## 🪄 EdgeGPT-Go
 
 EdgeGPT-Go is a New Bing unofficial API developed using Golang.  
 You can use it as a library, microservice or standalone cli application.  
