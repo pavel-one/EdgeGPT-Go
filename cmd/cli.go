@@ -1,39 +1,39 @@
 package main
 
 import (
-	"github.com/pavel-one/EdgeGPT-Go/config"
 	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
-	"time"
 )
 
 func main() {
-	conf, err := config.NewGpt()
+	s := EdgeGPT.NewStorage()
+
+	gpt, err := s.GetOrSet("any-key")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	gpt, err := EdgeGPT.NewGPT(conf)
+	// send ask async
+	mw, err := gpt.AskAsync("Hi, you're alive?")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	mw, err := gpt.AskAsync("Привет, ты живой?")
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	go mw.Worker()
+	go mw.Worker() // start worker
 
 	for _ = range mw.Chan {
+		// update answer
 		log.Infoln(mw.Answer.GetAnswer())
+		log.Infoln(mw.Answer.GetType())
+		log.Infoln(mw.Answer.GetSuggestions())
+		log.Infoln(mw.Answer.GetMaxUnit())
+		log.Infoln(mw.Answer.GetUserUnit())
 	}
 
-	as, err := gpt.AskSync("Покажи пример сокетов на golang gorilla")
+	// send sync ask
+	as, err := gpt.AskSync("Show an example of sockets in golang gorilla")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	log.Infoln(as.Answer.GetAnswer())
-
-	time.Sleep(time.Minute * 5)
 }
