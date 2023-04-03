@@ -1,4 +1,5 @@
 ## 🪄 EdgeGPT-Go
+[![Go Reference](https://pkg.go.dev/badge/github.com/pavel-one/EdgeGPT-Go.svg)](https://pkg.go.dev/github.com/pavel-one/EdgeGPT-Go)
 
 EdgeGPT-Go is a New Bing unofficial API developed using Golang.  
 You can use it as a library, microservice or standalone cli application.  
