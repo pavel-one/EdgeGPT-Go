@@ -10,6 +10,7 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 - [x] Library interface
 - [x] Sync/Async request
 - [ ] CLI interface
+- [ ] Refresh session
 
 ## How to use it:
 
@@ -31,7 +32,10 @@ package main
 
 import (
 	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 )
+
+var log = Logger.NewLogger("General")
 
 func main() {
 	s := EdgeGPT.NewStorage()
@@ -66,5 +70,25 @@ func main() {
 
 	log.Infoln(as.Answer.GetAnswer())
 }
-
 ```
+
+### Use as a docker microservice
+```shell
+docker run -v ./cookies:/app/cookies -p 8080:8080 ghcr.io/pavel-one/edgegpt-grpc:latest
+```
+
+### Use as a docker-compose
+```yaml
+version: "3"
+services:
+  gpt:
+    image: ghcr.io/pavel-one/edgegpt-grpc:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./cookies:/app/cookies
+```
+
+## Example service
+Work progress...
