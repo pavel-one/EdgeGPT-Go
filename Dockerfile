@@ -1,4 +1,4 @@
-FROM golang:1.20 as builder
+FROM golang:1.20-alpine as builder
 
 LABEL org.opencontainers.image.source=https://github.com/pavel-one/EdgeGPT-Go
 
