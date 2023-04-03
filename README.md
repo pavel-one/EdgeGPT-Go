@@ -25,7 +25,9 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 If you have several accounts - repeat for each of them and save to the `cookies` folder
 
 ### Use as a library
-`go get github.com/pavel-one/EdgeGPT-Go`   
+```shell
+go get github.com/pavel-one/EdgeGPT-Go
+```
 
 ```go
 package main
@@ -51,7 +53,7 @@ func main() {
 
 	go mw.Worker() // start worker
 
-	for _ = range mw.Chan {
+	for range mw.Chan {
 		// update answer
 		log.Println(mw.Answer.GetAnswer())
 		log.Println(mw.Answer.GetType())
