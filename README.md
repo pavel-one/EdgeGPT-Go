@@ -31,11 +31,9 @@ If you have several accounts - repeat for each of them and save to the `cookies`
 package main
 
 import (
-	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
-	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
+	"github.com/pavel-one/EdgeGPT-Go"
+	"log"
 )
-
-var log = Logger.NewLogger("General")
 
 func main() {
 	s := EdgeGPT.NewStorage()
@@ -55,11 +53,11 @@ func main() {
 
 	for _ = range mw.Chan {
 		// update answer
-		log.Infoln(mw.Answer.GetAnswer())
-		log.Infoln(mw.Answer.GetType())
-		log.Infoln(mw.Answer.GetSuggestions())
-		log.Infoln(mw.Answer.GetMaxUnit())
-		log.Infoln(mw.Answer.GetUserUnit())
+		log.Println(mw.Answer.GetAnswer())
+		log.Println(mw.Answer.GetType())
+		log.Println(mw.Answer.GetSuggestions())
+		log.Println(mw.Answer.GetMaxUnit())
+		log.Println(mw.Answer.GetUserUnit())
 	}
 
 	// send sync ask
@@ -68,7 +66,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	log.Infoln(as.Answer.GetAnswer())
+	log.Println(as.Answer.GetAnswer())
 }
 ```
 
@@ -92,3 +90,7 @@ services:
 
 ## Example service
 Work progress...
+
+## FAQ:
+#### Change protoc
+If you change protoc file, use `protoc --go_out=. --go-grpc_out=. proto/gpt.proto`

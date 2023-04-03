@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
+	"github.com/pavel-one/EdgeGPT-Go"
 	"github.com/pavel-one/EdgeGPT-Go/internal/GRPC"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	pb "github.com/pavel-one/EdgeGPT-Go/pkg/GRPC/GPT"

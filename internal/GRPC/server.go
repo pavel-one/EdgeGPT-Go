@@ -1,7 +1,7 @@
 package GRPC
 
 import (
-	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
+	"github.com/pavel-one/EdgeGPT-Go"
 	pb "github.com/pavel-one/EdgeGPT-Go/pkg/GRPC/GPT"
 	"google.golang.org/grpc/peer"
 	"log"
