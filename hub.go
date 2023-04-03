@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/websocket"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
+	"github.com/pavel-one/EdgeGPT-Go/responses"
 	"sync"
 )
 
@@ -32,7 +33,7 @@ func (c *Hub) initialHandshake() error {
 }
 
 // send new message to websocket
-func (c *Hub) send(message string) (*MessageWrapper, error) {
+func (c *Hub) send(message string) (*responses.MessageWrapper, error) {
 	c.mu.Lock()
 
 	m, err := json.Marshal(c.getRequest(message))
@@ -46,7 +47,7 @@ func (c *Hub) send(message string) (*MessageWrapper, error) {
 		return nil, err
 	}
 
-	return NewMessageWrapper(message, &c.mu, c.conn), nil
+	return responses.NewMessageWrapper(message, &c.mu, c.conn), nil
 }
 
 // Close hub and connection

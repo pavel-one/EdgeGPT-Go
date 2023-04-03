@@ -1,4 +1,4 @@
-package EdgeGPT
+package responses
 
 // UpdateResponse response for work generate message
 type UpdateResponse struct {

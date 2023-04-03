@@ -1,6 +1,8 @@
-package EdgeGPT
+package responses
 
-import "time"
+import (
+	"time"
+)
 
 // FinalResponse response for final generate message
 type FinalResponse struct {

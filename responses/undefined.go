@@ -1,4 +1,4 @@
-package EdgeGPT
+package responses
 
 // UndefinedResponse response for unused messages
 type UndefinedResponse struct {

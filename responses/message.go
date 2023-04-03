@@ -1,4 +1,4 @@
-package EdgeGPT
+package responses
 
 import (
 	"encoding/json"
@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 )
+
+const DelimiterByte = uint8(30)
 
 const (
 	TypeUpdate float64 = 1
@@ -72,7 +74,7 @@ func (m *MessageWrapper) Worker() error {
 
 	var response map[string]any
 	var updateResponse UpdateResponse
-	var finishResponse FinalResponse
+	var finalResponse FinalResponse
 	var undefinedResponse UndefinedResponse
 
 	for {
@@ -104,11 +106,11 @@ func (m *MessageWrapper) Worker() error {
 			m.Answer = &updateResponse
 			break
 		case TypeFinish:
-			if err := json.Unmarshal(message, &finishResponse); err != nil {
+			if err := json.Unmarshal(message, &finalResponse); err != nil {
 				return err
 			}
 
-			m.Answer = &finishResponse
+			m.Answer = &finalResponse
 			m.Final = true
 			m.Chan <- message
 			close(m.Chan)

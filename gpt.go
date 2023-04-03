@@ -9,6 +9,7 @@ import (
 	"github.com/pavel-one/EdgeGPT-Go/internal/CookieManager"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
+	"github.com/pavel-one/EdgeGPT-Go/responses"
 	"io"
 	"net/http"
 	"time"
@@ -20,8 +21,8 @@ const (
 	StyleCreative = "h3relaxedimg"
 	StyleBalanced = "galileo"
 	StylePrecise  = "h3precise"
-	Delimiter     = "\x1e"
 	DelimiterByte = uint8(30)
+	Delimiter     = "\x1e"
 )
 
 type GPT struct {
@@ -130,7 +131,7 @@ Example:
 		log.Println(mw.Answer.GetAnswer())
 	}
 */
-func (g *GPT) AskAsync(message string) (*MessageWrapper, error) {
+func (g *GPT) AskAsync(message string) (*responses.MessageWrapper, error) {
 
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
@@ -141,7 +142,7 @@ func (g *GPT) AskAsync(message string) (*MessageWrapper, error) {
 }
 
 // AskSync getting answer sync
-func (g *GPT) AskSync(message string) (*MessageWrapper, error) {
+func (g *GPT) AskSync(message string) (*responses.MessageWrapper, error) {
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
 	}
@@ -153,7 +154,7 @@ func (g *GPT) AskSync(message string) (*MessageWrapper, error) {
 
 	go m.Worker()
 
-	for _ = range m.Chan {
+	for range m.Chan {
 		if m.Final {
 			break
 		}
