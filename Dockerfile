@@ -7,8 +7,10 @@ WORKDIR /app
 COPY ./ ./
 
 RUN go mod download
-RUN go build -o ./build cmd/grpc.go
+RUN go build -o /tmp/build cmd/grpc.go
 
-RUN rm -rf internal/ cmd/ config/ grpc/ pkg/
+RUN rm -rf *
+
+RUN mv /tmp/build /app/build
 
 CMD ["/app/build"]
