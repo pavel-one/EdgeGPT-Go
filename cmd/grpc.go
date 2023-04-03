@@ -1,10 +1,10 @@
 package main
 
 import (
-	"EdgeGPT-Go/internal/EdgeGPT"
-	"EdgeGPT-Go/internal/GRPC"
-	"EdgeGPT-Go/internal/Logger"
-	pb "EdgeGPT-Go/pkg/GRPC/GPT"
+	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
+	"github.com/pavel-one/EdgeGPT-Go/internal/GRPC"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
+	pb "github.com/pavel-one/EdgeGPT-Go/pkg/GRPC/GPT"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
 	"net"

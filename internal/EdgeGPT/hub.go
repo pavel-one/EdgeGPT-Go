@@ -1,9 +1,9 @@
 package EdgeGPT
 
 import (
-	"EdgeGPT-Go/internal/helpers"
 	"encoding/json"
 	"github.com/gorilla/websocket"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
 	"sync"
 )
 
@@ -81,7 +81,7 @@ func (c *Hub) getRequest(message string) map[string]any {
 					"225cricinfo",
 					"224locals0",
 				},
-				"traceId":          helpers.RandomHex(32),
+				"traceId":          Helpers.RandomHex(32),
 				"isStartOfSession": c.InvocationId == 0,
 				"message": map[string]any{
 					"author":      "user",

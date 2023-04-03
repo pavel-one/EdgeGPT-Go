@@ -1,14 +1,14 @@
 package EdgeGPT
 
 import (
-	"EdgeGPT-Go/config"
-	"EdgeGPT-Go/internal/CookieManager"
-	"EdgeGPT-Go/internal/Logger"
-	"EdgeGPT-Go/internal/helpers"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/pavel-one/EdgeGPT-Go/config"
+	"github.com/pavel-one/EdgeGPT-Go/internal/CookieManager"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	"io"
 	"net/http"
 	"time"
@@ -42,7 +42,7 @@ func NewGPT(conf *config.GPT) (*GPT, error) {
 
 	gpt := &GPT{
 		Config:    conf,
-		cookies:   helpers.MapToCookies(manager.GetBestCookie()),
+		cookies:   Helpers.MapToCookies(manager.GetBestCookie()),
 		ExpiredAt: time.Now().Add(time.Minute * 120),
 		client: &http.Client{
 			Timeout: conf.TimeoutRequest,
@@ -169,7 +169,7 @@ func (g *GPT) createHub() (*Hub, error) {
 		return nil, errors.New("not set conversation")
 	}
 
-	conn, _, err := websocket.DefaultDialer.Dial(g.Config.WssUrl.String(), helpers.GetHeaders(g.Config.Headers))
+	conn, _, err := websocket.DefaultDialer.Dial(g.Config.WssUrl.String(), Helpers.GetHeaders(g.Config.Headers))
 	if err != nil {
 		return nil, err
 	}

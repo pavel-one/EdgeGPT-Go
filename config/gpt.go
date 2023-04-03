@@ -1,9 +1,9 @@
 package config
 
 import (
-	"EdgeGPT-Go/internal/helpers"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
 	"net/url"
 	"time"
 )
@@ -33,9 +33,9 @@ func NewGpt() (*GPT, error) {
 
 	forwared := fmt.Sprintf(
 		"13.%d.%d.%d",
-		helpers.RandInt(104, 107),
-		helpers.RandInt(0, 255),
-		helpers.RandInt(0, 255))
+		Helpers.RandInt(104, 107),
+		Helpers.RandInt(0, 255),
+		Helpers.RandInt(0, 255))
 
 	return &GPT{
 		ConversationUrl: cu,

@@ -1,9 +1,8 @@
 package main
 
 import (
-	"EdgeGPT-Go/config"
-	"EdgeGPT-Go/internal/EdgeGPT"
-	"log"
+	"github.com/pavel-one/EdgeGPT-Go/config"
+	"github.com/pavel-one/EdgeGPT-Go/internal/EdgeGPT"
 	"time"
 )
 
@@ -26,7 +25,7 @@ func main() {
 	go mw.Worker()
 
 	for _ = range mw.Chan {
-		log.Println(mw.Answer.GetAnswer())
+		log.Infoln(mw.Answer.GetAnswer())
 	}
 
 	as, err := gpt.AskSync("Покажи пример сокетов на golang gorilla")
@@ -34,7 +33,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	log.Println(as.Answer.GetAnswer())
+	log.Infoln(as.Answer.GetAnswer())
 
 	time.Sleep(time.Minute * 5)
 }

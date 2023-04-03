@@ -1,9 +1,9 @@
 package CookieManager
 
 import (
-	"EdgeGPT-Go/internal/Logger"
 	"encoding/json"
 	"github.com/gabriel-vasile/mimetype"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	"io"
 	"os"
 )

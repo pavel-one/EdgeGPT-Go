@@ -1,9 +1,9 @@
 package EdgeGPT
 
 import (
-	"EdgeGPT-Go/config"
 	"errors"
 	"fmt"
+	"github.com/pavel-one/EdgeGPT-Go/config"
 	"time"
 )
 
