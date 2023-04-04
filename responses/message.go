@@ -73,9 +73,9 @@ func (m *MessageWrapper) Worker() error {
 	defer m.mu.Unlock()
 
 	var response map[string]any
-	var updateResponse UpdateResponse
-	var finalResponse FinalResponse
-	var undefinedResponse UndefinedResponse
+	var updateResponse Update
+	var finalResponse Final
+	var undefinedResponse Undefined
 
 	for {
 		var message []byte

@@ -4,8 +4,8 @@ import (
 	"time"
 )
 
-// FinalResponse response for final generate message
-type FinalResponse struct {
+// Final response for final generate message
+type Final struct {
 	Type         int    `json:"type"`
 	InvocationId string `json:"invocationId,omitempty"`
 	Item         struct {
@@ -19,7 +19,7 @@ type FinalResponse struct {
 }
 
 // GetAnswer get answer text
-func (r *FinalResponse) GetAnswer() string {
+func (r *Final) GetAnswer() string {
 	item := r.Item
 	if len(item.Messages) == 0 {
 		return ""
@@ -31,21 +31,21 @@ func (r *FinalResponse) GetAnswer() string {
 }
 
 // GetType get type
-func (r *FinalResponse) GetType() int {
+func (r *Final) GetType() int {
 	return r.Type
 }
 
 // GetMaxUnit get max user questions for current session
-func (r *FinalResponse) GetMaxUnit() int {
+func (r *Final) GetMaxUnit() int {
 	return r.Item.Throttling.MaxNumUserMessagesInConversation
 }
 
 // GetUserUnit get current question for current session
-func (r *FinalResponse) GetUserUnit() int {
+func (r *Final) GetUserUnit() int {
 	return r.Item.Throttling.NumUserMessagesInConversation
 }
 
-func (r *FinalResponse) GetSuggestions() []*Suggestion {
+func (r *Final) GetSuggestions() []*Suggestion {
 	item := r.Item
 	if len(item.Messages) == 0 {
 		return nil

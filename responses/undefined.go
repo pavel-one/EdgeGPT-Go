@@ -1,30 +1,30 @@
 package responses
 
-// UndefinedResponse response for unused messages
-type UndefinedResponse struct {
+// Undefined response for unused messages
+type Undefined struct {
 	Type int `json:"type"`
 }
 
 // GetAnswer get answer text
-func (r *UndefinedResponse) GetAnswer() string {
+func (r *Undefined) GetAnswer() string {
 	return ""
 }
 
 // GetType get type
-func (r *UndefinedResponse) GetType() int {
+func (r *Undefined) GetType() int {
 	return r.Type
 }
 
 // GetMaxUnit get max user questions for current session
-func (r *UndefinedResponse) GetMaxUnit() int {
+func (r *Undefined) GetMaxUnit() int {
 	return 0
 }
 
 // GetUserUnit get current question for current session
-func (r *UndefinedResponse) GetUserUnit() int {
+func (r *Undefined) GetUserUnit() int {
 	return 0
 }
 
-func (r *UndefinedResponse) GetSuggestions() []*Suggestion {
+func (r *Undefined) GetSuggestions() []*Suggestion {
 	return nil
 }

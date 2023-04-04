@@ -1,7 +1,7 @@
 package responses
 
-// UpdateResponse response for work generate message
-type UpdateResponse struct {
+// Update response for work generate message
+type Update struct {
 	Type      int    `json:"type"`
 	Target    string `json:"target"`
 	Arguments []struct {
@@ -15,7 +15,7 @@ type UpdateResponse struct {
 }
 
 // GetAnswer get answer text
-func (u *UpdateResponse) GetAnswer() string {
+func (u *Update) GetAnswer() string {
 	arg := u.Arguments[0]
 	if len(arg.Messages) == 0 {
 		return ""
@@ -27,20 +27,20 @@ func (u *UpdateResponse) GetAnswer() string {
 }
 
 // GetType get type
-func (u *UpdateResponse) GetType() int {
+func (u *Update) GetType() int {
 	return u.Type
 }
 
 // GetMaxUnit get max user questions for current session
-func (u *UpdateResponse) GetMaxUnit() int {
+func (u *Update) GetMaxUnit() int {
 	return 0
 }
 
 // GetUserUnit get current question for current session
-func (u *UpdateResponse) GetUserUnit() int {
+func (u *Update) GetUserUnit() int {
 	return 0
 }
 
-func (u *UpdateResponse) GetSuggestions() []*Suggestion {
+func (u *Update) GetSuggestions() []*Suggestion {
 	return nil
 }
