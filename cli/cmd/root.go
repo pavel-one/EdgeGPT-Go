@@ -5,24 +5,26 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/pavel-one/EdgeGPT-Go"
-	"github.com/pavel-one/EdgeGPT-Go/config"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
 	"strings"
 )
 
+var gpt *EdgeGPT.GPT
+
 var rootCmd = &cobra.Command{
 	Use:   "EdgeGPT-Go",
 	Short: "CLI for using edge bing",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		gpt = newChat()
 		reader := bufio.NewReader(os.Stdin)
 
 		color.Green("Hello, I am a chatbot for speak with edge bing!")
 
 		for {
-			fmt.Println("You:")
+			fmt.Print("You:\n\t")
 			input, _ := reader.ReadString('\n')
 			input = strings.TrimSpace(input)
 
@@ -44,25 +46,23 @@ func Execute() {
 }
 
 func ask(input string) {
-	gpt := gpt()
-
-	mw, err := gpt.AskSync(input)
+	mw, err := gpt.AskAsync(input)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	go mw.Worker()
 
 	for range mw.Chan {
 	}
-	color.Cyan(mw.Answer.GetAnswer())
+
+	fmt.Print("Bot:\n\t" + mw.Answer.GetAnswer())
 }
 
-func gpt() *EdgeGPT.GPT {
-	conf, err := config.NewGpt()
-	if err != nil {
-		log.Fatalln(err)
-	}
+func newChat() *EdgeGPT.GPT {
+	s := EdgeGPT.NewStorage()
 
-	gpt, err := EdgeGPT.NewGPT(conf)
+	gpt, err := s.GetOrSet("cli")
 	if err != nil {
 		log.Fatalln(err)
 	}
