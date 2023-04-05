@@ -24,7 +24,7 @@ var rootCmd = &cobra.Command{
 		color.Green("Hello, I am a chatbot for speak with edge bing!")
 
 		for {
-			fmt.Print("You:\n\t")
+			fmt.Print("You:\n    ")
 			input, _ := reader.ReadString('\n')
 			input = strings.TrimSpace(input)
 
@@ -46,6 +46,7 @@ func Execute() {
 }
 
 func ask(input string) {
+	var l int
 	mw, err := gpt.AskAsync(input)
 	if err != nil {
 		log.Fatalln(err)
@@ -53,10 +54,13 @@ func ask(input string) {
 
 	go mw.Worker()
 
+	fmt.Print("Bot:\n    ")
 	for range mw.Chan {
+		ans := mw.Answer.GetAnswer()
+		res := ans[l:]
+		l = len(mw.Answer.GetAnswer())
+		fmt.Print(res)
 	}
-
-	fmt.Print("Bot:\n\t" + mw.Answer.GetAnswer())
 }
 
 func newChat() *EdgeGPT.GPT {
