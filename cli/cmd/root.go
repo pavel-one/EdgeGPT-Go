@@ -46,7 +46,12 @@ func Execute() {
 }
 
 func ask(input string) {
-	var l int
+	var (
+		l int
+		//code bool
+		//labelCount int
+		//codeSource string
+	)
 	mw, err := gpt.AskAsync(input)
 	if err != nil {
 		log.Fatalln(err)
@@ -57,8 +62,41 @@ func ask(input string) {
 	fmt.Print("Bot:\n    ")
 	for range mw.Chan {
 		ans := mw.Answer.GetAnswer()
+
+		if len(ans) == 0 {
+			continue
+		}
+
 		res := ans[l:]
-		l = len(mw.Answer.GetAnswer())
+		if res == "```" || res == "go" || res == " \n```\n\n" {
+			//code = true
+			//l = len(ans)
+			//continue
+		}
+
+		//if res == ""
+		//if res == "```" {
+		//fmt.Println("```HERE")
+		//code = !code
+		//l = len(ans)
+		//continue
+		//}
+
+		//if code {
+		//	codeSource += res
+		//	l = len(ans)
+		//	continue
+		//}
+		//
+		//if code == false && codeSource != "" {
+		//	if err := quick.Highlight(os.Stdout, codeSource, "go", "terminal", "monokai"); err != nil {
+		//		log.Fatalln(err)
+		//	}
+		//	l = len(ans)
+		//	continue
+		//}
+
+		l = len(ans)
 		fmt.Print(res)
 	}
 }
