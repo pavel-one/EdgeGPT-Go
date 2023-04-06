@@ -5,5 +5,5 @@ type GptResponse interface {
 	GetType() int
 	GetMaxUnit() int
 	GetUserUnit() int
-	GetSuggestions() []*Suggestion
+	GetSuggestions() []map[string]any
 }

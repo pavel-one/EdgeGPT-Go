@@ -1,6 +1,7 @@
 package responses
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -45,7 +46,9 @@ func (r *Final) GetUserUnit() int {
 	return r.Item.Throttling.NumUserMessagesInConversation
 }
 
-func (r *Final) GetSuggestions() []*Suggestion {
+func (r *Final) GetSuggestions() []map[string]any {
+	var out []map[string]any
+
 	item := r.Item
 	if len(item.Messages) == 0 {
 		return nil
@@ -53,5 +56,20 @@ func (r *Final) GetSuggestions() []*Suggestion {
 
 	message := item.Messages[len(item.Messages)-1]
 
-	return message.SuggestedResponses
+	for _, item := range message.SuggestedResponses {
+		var m map[string]any
+
+		b, err := json.Marshal(item)
+		if err != nil {
+			return nil
+		}
+
+		if err := json.Unmarshal(b, &m); err != nil {
+			return nil
+		}
+
+		out = append(out, m)
+	}
+
+	return out
 }

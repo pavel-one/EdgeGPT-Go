@@ -41,6 +41,6 @@ func (u *Update) GetUserUnit() int {
 	return 0
 }
 
-func (u *Update) GetSuggestions() []*Suggestion {
+func (u *Update) GetSuggestions() []map[string]any {
 	return nil
 }
