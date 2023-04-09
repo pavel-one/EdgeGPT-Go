@@ -3,7 +3,7 @@ package GRPC
 import (
 	"github.com/pavel-one/EdgeGPT-Go"
 	pb "github.com/pavel-one/EdgeGPT-Go/pkg/GRPC/GPT"
-	"google.golang.org/grpc/peer"
+	"google.golang.org/protobuf/types/known/structpb"
 	"log"
 	"time"
 )
@@ -20,13 +20,12 @@ func NewServer(s *EdgeGPT.Storage) *Server {
 }
 
 func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
-	p, _ := peer.FromContext(stream.Context())
-	gpt, err := s.Storage.GetOrSet(p.Addr.String())
+	gpt, err := s.Storage.GetOrSet(r.GetId())
 	if err != nil {
 		return err
 	}
 
-	message, err := gpt.AskAsync(r.Text)
+	message, err := gpt.AskAsync(r.GetText())
 	if err != nil {
 		return err
 	}
@@ -34,7 +33,7 @@ func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
 	go func() {
 		err := message.Worker()
 		if err != nil {
-			log.Println(err)
+			log.Println("Worker err:", err)
 		}
 	}()
 
@@ -55,9 +54,9 @@ func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
 
 		suggestions := message.Answer.GetSuggestions()
 		if suggestions != nil {
-			res.Suggestions = make([]*pb.AskResponse_Suggestion, len(suggestions))
+			res.Suggestions = make([]*structpb.Struct, len(suggestions))
 			for i, sug := range suggestions {
-				res.Suggestions[i] = &pb.AskResponse_Suggestion{Text: sug.Text}
+				res.Suggestions[i], _ = structpb.NewStruct(sug)
 			}
 		}
 

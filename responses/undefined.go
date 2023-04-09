@@ -25,6 +25,6 @@ func (r *Undefined) GetUserUnit() int {
 	return 0
 }
 
-func (r *Undefined) GetSuggestions() []*Suggestion {
+func (r *Undefined) GetSuggestions() []map[string]any {
 	return nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.21.6
-// source: grpc/gpt.proto
+// source: proto/gpt.proto
 
 package GPT
 
@@ -128,5 +128,5 @@ var GptService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "grpc/gpt.proto",
+	Metadata: "proto/gpt.proto",
 }
