@@ -28,6 +28,13 @@ func (r *Final) GetAnswer() string {
 
 	message := item.Messages[len(item.Messages)-1]
 
+	if message.AdaptiveCards == nil {
+		return ""
+	}
+	if message.AdaptiveCards[0].Body == nil {
+		return ""
+	}
+
 	return message.AdaptiveCards[0].Body[0].Text
 }
 
