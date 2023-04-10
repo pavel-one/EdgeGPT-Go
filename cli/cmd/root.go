@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/pavel-one/EdgeGPT-Go"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"syscall"
 )
 
 var rootCmd = &cobra.Command{
@@ -32,4 +34,15 @@ func newChat(key string) *EdgeGPT.GPT {
 	}
 
 	return gpt
+}
+
+func handleSignal(sigs chan os.Signal) {
+	for {
+		sig := <-sigs
+		switch sig {
+		case syscall.SIGINT:
+			fmt.Println("\nGood bye!")
+			os.Exit(0)
+		}
+	}
 }
