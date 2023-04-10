@@ -40,7 +40,7 @@ func run(cmd *cobra.Command, args []string) {
 	gpt = newChat("cli")
 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Println("Hello, I am a chatbot for speak with edge bing!")
+	fmt.Println("Hello, I am a chatbot for speaking with edge bing!")
 
 	for {
 		fmt.Print("\nYou:\n    ")
@@ -104,7 +104,11 @@ func rich(input string) {
 	}
 
 	ans := mw.Answer.GetAnswer()
-	regex := regexp.MustCompile("([^`]+)```([a-zA-Z]+[+`]*)([^`]+)```([^`]+)")
+	if ans == "" {
+		return
+	}
+
+	regex := regexp.MustCompile("([\\s\\S]*?)```([a-zA-Z]+[+]*)([\\s\\S]*?)```([^`]+)")
 	matches := regex.FindAllStringSubmatch(ans, -1)
 
 	if matches == nil {
@@ -116,13 +120,15 @@ func rich(input string) {
 		return
 	}
 
-	fmt.Print(matches[0][1])
+	for _, m := range matches {
+		fmt.Print(m[1])
 
-	if err := quick.Highlight(os.Stdout, matches[0][3], matches[0][2], "terminal", "monokai"); err != nil {
-		log.Fatalln(err)
+		if err := quick.Highlight(os.Stdout, m[3], m[2], "terminal", "monokai"); err != nil {
+			log.Fatalln(err)
+		}
+
+		fmt.Print(m[4])
 	}
-
-	fmt.Print(matches[0][4])
 
 	return
 }
