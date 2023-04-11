@@ -7,7 +7,6 @@ import (
 	pb "github.com/pavel-one/EdgeGPT-Go/pkg/GRPC/GPT"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 )
 
@@ -21,21 +20,15 @@ var gRPCCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(gRPCCmd)
 	gRPCCmd.Flags().StringP("port", "p", "8080", "port for gRPC server")
-	gRPCCmd.Flags().StringP("channel", "c", "General", "channel for logger")
+	logger = Logger.NewLogger("gRPC")
+	storage = EdgeGPT.NewStorage()
 }
 
 func rungRPC(cmd *cobra.Command, args []string) {
 	port, err := cmd.Flags().GetString("port")
 	if err != nil {
-		log.Fatalf("failed to get flag `port`: %v", err)
+		logger.Fatalf("failed to get flag `port`: %v", err)
 	}
-	channel, err := cmd.Flags().GetString("channel")
-	if err != nil {
-		log.Fatalf("failed to get flag `channel`: %v", err)
-	}
-
-	logger := Logger.NewLogger(channel)
-	storage := EdgeGPT.NewStorage()
 
 	srv := GRPC.NewServer(storage)
 

@@ -2,17 +2,26 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pavel-one/EdgeGPT-Go"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
+var (
+	logger  *zap.SugaredLogger
+	storage *EdgeGPT.Storage
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "EdgeGPT-Go",
-	Short: "CLI for using edge bing",
-	Long:  ``,
-	Run:   func(cmd *cobra.Command, args []string) {},
+	Short: "CLI for using Edge Bing",
+	Long:  "Cli for using Edge Bing. Available commands:\nChat - for speaking with Bing\ngRPC - start gRPC server for speaking with Bing",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(cmd.Long)
+	},
 }
 
 func init() {

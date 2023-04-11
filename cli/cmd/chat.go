@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/MichaelMure/go-term-markdown"
 	"github.com/pavel-one/EdgeGPT-Go"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
@@ -12,8 +13,8 @@ import (
 )
 
 var (
-	gpt *EdgeGPT.GPT
-	r   bool
+	chat *EdgeGPT.GPT
+	r    bool
 )
 
 var ChatCmd = &cobra.Command{
@@ -26,6 +27,8 @@ var ChatCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(ChatCmd)
 	ChatCmd.Flags().BoolP("rich", "r", false, "parse markdown to terminal")
+	logger = Logger.NewLogger("Chat")
+	storage = EdgeGPT.NewStorage()
 }
 
 func runChat(cmd *cobra.Command, args []string) {
@@ -35,7 +38,8 @@ func runChat(cmd *cobra.Command, args []string) {
 	}
 	r = rich
 
-	gpt = newChat("cli")
+	newChat("chat")
+
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -52,15 +56,12 @@ func runChat(cmd *cobra.Command, args []string) {
 	}
 }
 
-func newChat(key string) *EdgeGPT.GPT {
-	s := EdgeGPT.NewStorage()
-
-	gpt, err := s.GetOrSet(key)
+func newChat(key string) {
+	gpt, err := storage.GetOrSet(key)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatalf("Failed to create new chat: %v", err)
 	}
-
-	return gpt
+	chat = gpt
 }
 
 func ask(input string) {
@@ -76,9 +77,9 @@ func ask(input string) {
 func base(input string) {
 	var l int
 
-	mw, err := gpt.AskAsync(input)
+	mw, err := chat.AskAsync(input)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatalln(err)
 	}
 
 	go mw.Worker()
@@ -106,9 +107,9 @@ func base(input string) {
 func rich(input string) {
 	fmt.Println("Bot:")
 
-	mw, err := gpt.AskSync(input)
+	mw, err := chat.AskSync(input)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Fatalln(err)
 	}
 
 	ans := mw.Answer.GetAnswer()
@@ -116,14 +117,14 @@ func rich(input string) {
 		return
 	}
 
-	result := markdown.Render(ans, 100, 1)
+	result := markdown.Render(ans, 150, 4)
 
 	if result == nil {
 		fmt.Println(ans)
 		return
 	}
 
-	fmt.Println(string(result))
+	fmt.Print(string(result))
 
 	return
 }
