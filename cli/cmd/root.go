@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pavel-one/EdgeGPT-Go"
 	"github.com/spf13/cobra"
-	"log"
 	"os"
+	"os/signal"
 	"syscall"
 )
 
@@ -16,24 +15,17 @@ var rootCmd = &cobra.Command{
 	Run:   func(cmd *cobra.Command, args []string) {},
 }
 
-func init() {}
+func init() {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs)
+	go handleSignal(sigs)
+}
 
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
-}
-
-func newChat(key string) *EdgeGPT.GPT {
-	s := EdgeGPT.NewStorage()
-
-	gpt, err := s.GetOrSet(key)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	return gpt
 }
 
 func handleSignal(sigs chan os.Signal) {

@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
-	"os/signal"
 	"strings"
 )
 
@@ -17,23 +16,19 @@ var (
 	r   bool
 )
 
-var EdgeGPTCliCmd = &cobra.Command{
+var ChatCmd = &cobra.Command{
 	Use:   "Chat",
-	Short: "EdgeBing chat",
+	Short: "Edge Bing chat",
 	Long:  "Simple cli for speaking with EdgeGPT Bing ",
-	Run:   run,
+	Run:   runChat,
 }
 
 func init() {
-	rootCmd.AddCommand(EdgeGPTCliCmd)
-	EdgeGPTCliCmd.Flags().BoolP("rich", "r", false, "parse markdown to terminal")
-
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs)
-	go handleSignal(sigs)
+	rootCmd.AddCommand(ChatCmd)
+	ChatCmd.Flags().BoolP("rich", "r", false, "parse markdown to terminal")
 }
 
-func run(cmd *cobra.Command, args []string) {
+func runChat(cmd *cobra.Command, args []string) {
 	rich, err := cmd.Flags().GetBool("rich")
 	if err != nil {
 		log.Fatalln(err)
@@ -56,6 +51,18 @@ func run(cmd *cobra.Command, args []string) {
 		ask(input)
 	}
 }
+
+func newChat(key string) *EdgeGPT.GPT {
+	s := EdgeGPT.NewStorage()
+
+	gpt, err := s.GetOrSet(key)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return gpt
+}
+
 func ask(input string) {
 	if r {
 		rich(input)
