@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	"github.com/pavel-one/EdgeGPT-Go"
 	"github.com/pavel-one/EdgeGPT-Go/internal/GRPC"
-	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	pb "github.com/pavel-one/EdgeGPT-Go/pkg/GRPC/GPT"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -20,11 +18,10 @@ var gRPCCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(gRPCCmd)
 	gRPCCmd.Flags().StringP("port", "p", "8080", "port for gRPC server")
-	logger = Logger.NewLogger("gRPC")
-	storage = EdgeGPT.NewStorage()
 }
 
 func rungRPC(cmd *cobra.Command, args []string) {
+	initLoggerWithStorage("gRPC")
 	port, err := cmd.Flags().GetString("port")
 	if err != nil {
 		logger.Fatalf("failed to get flag `port`: %v", err)

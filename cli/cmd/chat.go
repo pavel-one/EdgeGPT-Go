@@ -8,7 +8,6 @@ import (
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/pavel-one/EdgeGPT-Go"
-	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
@@ -16,10 +15,11 @@ import (
 )
 
 var (
-	chat   *EdgeGPT.GPT
-	r      bool
-	toHtml bool
-	output string
+	chat            *EdgeGPT.GPT
+	r               bool
+	toHtml          bool
+	output          string
+	withoutTerminal bool
 )
 
 var ChatCmd = &cobra.Command{
@@ -33,12 +33,12 @@ func init() {
 	rootCmd.AddCommand(ChatCmd)
 	ChatCmd.Flags().BoolP("rich", "r", false, "parse markdown to terminal")
 	ChatCmd.Flags().BoolP("html", "", false, "parse markdown to html(use with --output)")
-	ChatCmd.Flags().StringP("output", "o", "terminal", "output file(markdown or html like test.md or test.html) or terminal")
-	logger = Logger.NewLogger("Chat")
-	storage = EdgeGPT.NewStorage()
+	ChatCmd.Flags().StringP("output", "o", "", "output file(markdown or html like test.md or test.html or just text like `test` file)")
+	ChatCmd.Flags().BoolP("without-term", "w", false, "if output set will be write response to file without terminal")
 }
 
 func runChat(cmd *cobra.Command, args []string) {
+	initLoggerWithStorage("Chat")
 	getFlags(cmd)
 	newChat("chat")
 
@@ -76,6 +76,12 @@ func getFlags(cmd *cobra.Command) {
 		logger.Fatalf("failed to get flag `output`: %v", err)
 	}
 	output = out
+
+	wt, err := cmd.Flags().GetBool("without-term")
+	if err != nil {
+		logger.Fatalf("failed to get flag `with-terminal`: %v", err)
+	}
+	withoutTerminal = wt
 }
 
 func newChat(key string) {
@@ -87,14 +93,16 @@ func newChat(key string) {
 }
 
 func ask(input string) {
-	if output == "terminal" {
-		if r {
-			rich(input)
-		} else {
-			base(input)
-		}
+	if output != "" && withoutTerminal {
+		ans := getAnswer(input)
+		writeWithFlags([]byte(ans))
+		return
+	}
+
+	if r {
+		rich(input)
 	} else {
-		askAndWrite(input)
+		base(input)
 	}
 }
 
@@ -126,13 +134,18 @@ func base(input string) {
 		l = anslen
 		fmt.Print(res)
 	}
+
+	go writeWithFlags([]byte(mw.Answer.GetAnswer()))
+
 	return
 }
 
 func rich(input string) {
 	fmt.Println("Bot:")
 
-	ans := answer(input)
+	ans := getAnswer(input)
+
+	go writeWithFlags([]byte(ans))
 
 	result := term_markdown.Render(ans, 150, 4)
 
@@ -146,7 +159,7 @@ func rich(input string) {
 	return
 }
 
-func answer(input string) string {
+func getAnswer(input string) string {
 	mw, err := chat.AskSync(input)
 	if err != nil {
 		logger.Fatalln(err)
@@ -160,13 +173,14 @@ func answer(input string) string {
 	return ans
 }
 
-func askAndWrite(input string) {
-	ans := []byte(answer(input))
-	if toHtml {
-		data := mdToHtml(ans)
-		writeToFile(data)
-	} else {
-		writeToFile(ans)
+func writeWithFlags(data []byte) {
+	if output != "" {
+		if toHtml {
+			d := mdToHtml(data)
+			writeToFile(d)
+		} else {
+			writeToFile(data)
+		}
 	}
 }
 
@@ -212,5 +226,5 @@ func writeToFile(data []byte) {
 			logger.Fatalf("failed to sync data for file `%s`: %v", file.Name(), err)
 		}
 	}
-	fmt.Println("    Response written successfully to " + output)
+	logger.Info("Response written successfully to " + output)
 }

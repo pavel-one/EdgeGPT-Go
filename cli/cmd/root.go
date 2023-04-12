@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/pavel-one/EdgeGPT-Go"
+	"github.com/pavel-one/EdgeGPT-Go/internal/Logger"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"os"
@@ -35,6 +36,11 @@ func Execute() {
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+func initLoggerWithStorage(channel string) {
+	logger = Logger.NewLogger(channel)
+	storage = EdgeGPT.NewStorage()
 }
 
 func handleSignal(sigs chan os.Signal) {
