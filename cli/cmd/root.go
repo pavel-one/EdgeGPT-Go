@@ -16,6 +16,8 @@ var (
 	storage *EdgeGPT.Storage
 )
 
+var endpoint string
+
 var rootCmd = &cobra.Command{
 	Use:   "EdgeGPT-Go",
 	Short: "CLI for using Edge Bing",
@@ -35,6 +37,20 @@ func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
+	}
+}
+
+func setConversationEndpoint() {
+	if endpoint != "" {
+		if err := os.Setenv("CONVERSATION_ENDPOINT", endpoint); err != nil {
+			logger.Fatal("failed to set CONVERSATION_ENDPOINT to environment")
+		}
+	}
+}
+
+func flagCheckError(flag string, err error) {
+	if err != nil {
+		logger.Fatalf("failed to get flag `%s`: %v", flag, err)
 	}
 }
 

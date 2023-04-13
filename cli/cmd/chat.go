@@ -35,6 +35,7 @@ func init() {
 	ChatCmd.Flags().BoolP("html", "", false, "parse markdown to html(use with --output)")
 	ChatCmd.Flags().StringP("output", "o", "", "output file(markdown or html like test.md or test.html or just text like `test` file)")
 	ChatCmd.Flags().BoolP("without-term", "w", false, "if output set will be write response to file without terminal")
+	ChatCmd.Flags().StringP("endpoint", "e", "", "set endpoint for create conversation(if the default one doesn't suit you)")
 }
 
 func runChat(cmd *cobra.Command, args []string) {
@@ -60,28 +61,30 @@ func runChat(cmd *cobra.Command, args []string) {
 
 func getFlags(cmd *cobra.Command) {
 	rich, err := cmd.Flags().GetBool("rich")
-	if err != nil {
-		logger.Fatalf("failed to get flag `rich`: %v", err)
-	}
+	flagCheckError("rich", err)
+
 	r = rich
 
 	tohtml, err := cmd.Flags().GetBool("html")
-	if err != nil {
-		logger.Fatalf("failed to get flag `html`: %v", err)
-	}
+	flagCheckError("html", err)
+
 	toHtml = tohtml
 
 	out, err := cmd.Flags().GetString("output")
-	if err != nil {
-		logger.Fatalf("failed to get flag `output`: %v", err)
-	}
+	flagCheckError("output", err)
+
 	output = out
 
 	wt, err := cmd.Flags().GetBool("without-term")
-	if err != nil {
-		logger.Fatalf("failed to get flag `with-terminal`: %v", err)
-	}
+	flagCheckError("without-term", err)
+
 	withoutTerminal = wt
+
+	e, err := cmd.Flags().GetString("endpoint")
+	flagCheckError("endpoint", err)
+
+	endpoint = e
+	setConversationEndpoint()
 }
 
 func newChat(key string) {
