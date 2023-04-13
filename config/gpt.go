@@ -17,15 +17,7 @@ type GPT struct {
 }
 
 func NewGpt() (*GPT, error) {
-	var u string
-	switch os.Getenv("ENDPOINT_REGION") {
-	case "China":
-		u = "https://edge.churchless.tech/edgesvc/turing/conversation/create"
-	default:
-		u = "https://edgeservices.bing.com/edgesvc/turing/conversation/create"
-	}
-
-	cu, err := url.Parse(u)
+	cu, err := url.Parse(getConversationEndpoint())
 	if err != nil {
 		return nil, err
 	}
@@ -73,4 +65,12 @@ func NewGpt() (*GPT, error) {
 			"x-forwarded-for":             forwared,
 		},
 	}, nil
+}
+
+func getConversationEndpoint() string {
+	er := os.Getenv("CONVERSATION_ENDPOINT")
+	if er != "" {
+		return er
+	}
+	return "https://edgeservices.bing.com/edgesvc/turing/conversation/create"
 }
