@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -16,7 +17,15 @@ type GPT struct {
 }
 
 func NewGpt() (*GPT, error) {
-	cu, err := url.Parse("https://edgeservices.bing.com/edgesvc/turing/conversation/create")
+	var u string
+	switch os.Getenv("ENDPOINT_REGION") {
+	case "China":
+		u = "https://edge.churchless.tech/edgesvc/turing/conversation/create"
+	default:
+		u = "https://edgeservices.bing.com/edgesvc/turing/conversation/create"
+	}
+
+	cu, err := url.Parse(u)
 	if err != nil {
 		return nil, err
 	}
