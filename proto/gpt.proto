@@ -20,4 +20,5 @@ message AskResponse {
 message AskRequest {
   string id = 1;
   string text = 2;
+  string style = 3;
 }
