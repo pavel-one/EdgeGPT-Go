@@ -25,7 +25,7 @@ func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
 		return err
 	}
 
-	message, err := gpt.AskAsync(r.GetText())
+	message, err := gpt.AskAsync(r.GetStyle(), r.GetText())
 	if err != nil {
 		return err
 	}

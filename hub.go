@@ -33,10 +33,10 @@ func (c *Hub) initialHandshake() error {
 }
 
 // send new message to websocket
-func (c *Hub) send(message string) (*responses.MessageWrapper, error) {
+func (c *Hub) send(style, message string) (*responses.MessageWrapper, error) {
 	c.mu.Lock()
 
-	m, err := json.Marshal(c.getRequest(message))
+	m, err := json.Marshal(c.getRequest(style, message))
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,21 @@ func (c *Hub) Close() {
 }
 
 // getRequest generate struct for new request websocket
-func (c *Hub) getRequest(message string) map[string]any {
+func (c *Hub) getRequest(style, message string) map[string]any {
+	switch style {
+	case "creative":
+		style = StyleCreative
+	case "balanced":
+		style = StyleBalanced
+	case "precise":
+		style = StylePrecise
+	case StyleCreative:
+	case StyleBalanced:
+	case StylePrecise:
+	default:
+		style = StyleBalanced
+	}
+
 	m := map[string]any{
 		"invocationId": string(rune(c.InvocationId)),
 		"target":       "chat",
@@ -71,7 +85,7 @@ func (c *Hub) getRequest(message string) map[string]any {
 					"disable_emoji_spoken_text",
 					"responsible_ai_policy_235",
 					"enablemm",
-					StyleBalanced,
+					style,
 					"dtappid",
 					"cricinfo",
 					"cricinfov2",
