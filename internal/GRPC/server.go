@@ -25,25 +25,7 @@ func (s *Server) Ask(r *pb.AskRequest, stream pb.GptService_AskServer) error {
 		return err
 	}
 
-	var style string
-	switch r.GetStyle() {
-	case "creative":
-		style = EdgeGPT.StyleCreative
-	case "balanced":
-		style = EdgeGPT.StyleBalanced
-	case "precise":
-		style = EdgeGPT.StylePrecise
-	case EdgeGPT.StyleCreative:
-		style = EdgeGPT.StyleCreative
-	case EdgeGPT.StyleBalanced:
-		style = EdgeGPT.StyleBalanced
-	case EdgeGPT.StylePrecise:
-		style = EdgeGPT.StylePrecise
-	default:
-		style = EdgeGPT.StyleBalanced
-	}
-
-	message, err := gpt.AskAsync(style, r.GetText())
+	message, err := gpt.AskAsync(r.GetStyle(), r.GetText())
 	if err != nil {
 		return err
 	}

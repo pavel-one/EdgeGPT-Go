@@ -58,6 +58,20 @@ func (c *Hub) Close() {
 
 // getRequest generate struct for new request websocket
 func (c *Hub) getRequest(style, message string) map[string]any {
+	switch style {
+	case "creative":
+		style = StyleCreative
+	case "balanced":
+		style = StyleBalanced
+	case "precise":
+		style = StylePrecise
+	case StyleCreative:
+	case StyleBalanced:
+	case StylePrecise:
+	default:
+		style = StyleBalanced
+	}
+
 	m := map[string]any{
 		"invocationId": string(rune(c.InvocationId)),
 		"target":       "chat",
