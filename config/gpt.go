@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -16,7 +17,7 @@ type GPT struct {
 }
 
 func NewGpt() (*GPT, error) {
-	cu, err := url.Parse("https://edgeservices.bing.com/edgesvc/turing/conversation/create")
+	cu, err := url.Parse(getConversationEndpoint())
 	if err != nil {
 		return nil, err
 	}
@@ -64,4 +65,12 @@ func NewGpt() (*GPT, error) {
 			"x-forwarded-for":             forwared,
 		},
 	}, nil
+}
+
+func getConversationEndpoint() string {
+	er := os.Getenv("CONVERSATION_ENDPOINT")
+	if er != "" {
+		return er
+	}
+	return "https://edgeservices.bing.com/edgesvc/turing/conversation/create"
 }

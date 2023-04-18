@@ -131,23 +131,23 @@ Example:
 		log.Println(mw.Answer.GetAnswer())
 	}
 */
-func (g *GPT) AskAsync(message string) (*responses.MessageWrapper, error) {
+func (g *GPT) AskAsync(style, message string) (*responses.MessageWrapper, error) {
 
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
 	}
 
 	log.Infoln("New ask:", message)
-	return g.Hub.send(message)
+	return g.Hub.send(style, message)
 }
 
 // AskSync getting answer sync
-func (g *GPT) AskSync(message string) (*responses.MessageWrapper, error) {
+func (g *GPT) AskSync(style, message string) (*responses.MessageWrapper, error) {
 	if len(message) > 2000 {
 		return nil, fmt.Errorf("message very long, max: %d", 2000)
 	}
 
-	m, err := g.Hub.send(message)
+	m, err := g.Hub.send(style, message)
 	if err != nil {
 		return nil, err
 	}
