@@ -20,6 +20,7 @@ var (
 	toHtml          bool
 	output          string
 	withoutTerminal bool
+	style           string
 )
 
 var ChatCmd = &cobra.Command{
@@ -36,6 +37,7 @@ func init() {
 	ChatCmd.Flags().StringP("output", "o", "", "output file(markdown or html like test.md or test.html or just text like `test` file)")
 	ChatCmd.Flags().BoolP("without-term", "w", false, "if output set will be write response to file without terminal")
 	ChatCmd.Flags().StringP("endpoint", "e", "", "set endpoint for create conversation(if the default one doesn't suit you)")
+	ChatCmd.Flags().StringP("style", "s", "balanced", "set conversation style(creative, balanced, precise)")
 }
 
 func runChat(cmd *cobra.Command, args []string) {
@@ -80,6 +82,11 @@ func getFlags(cmd *cobra.Command) {
 
 	withoutTerminal = wt
 
+	s, err := cmd.Flags().GetString("style")
+	flagCheckError("style", err)
+
+	style = s
+
 	e, err := cmd.Flags().GetString("endpoint")
 	flagCheckError("endpoint", err)
 
@@ -112,7 +119,7 @@ func ask(input string) {
 func base(input string) {
 	var l int
 
-	mw, err := chat.AskAsync(input)
+	mw, err := chat.AskAsync(style, input)
 	if err != nil {
 		logger.Fatalln(err)
 	}
@@ -163,7 +170,7 @@ func rich(input string) {
 }
 
 func getAnswer(input string) string {
-	mw, err := chat.AskSync(input)
+	mw, err := chat.AskSync(style, input)
 	if err != nil {
 		logger.Fatalln(err)
 	}
