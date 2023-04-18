@@ -48,12 +48,6 @@ func setConversationEndpoint() {
 	}
 }
 
-func flagCheckError(flag string, err error) {
-	if err != nil {
-		logger.Fatalf("failed to get flag `%s`: %v", flag, err)
-	}
-}
-
 func initLoggerWithStorage(channel string) {
 	logger = Logger.NewLogger(channel)
 	storage = EdgeGPT.NewStorage()

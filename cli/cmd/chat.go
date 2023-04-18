@@ -32,17 +32,17 @@ var ChatCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(ChatCmd)
-	ChatCmd.Flags().BoolP("rich", "r", false, "parse markdown to terminal")
-	ChatCmd.Flags().BoolP("html", "", false, "parse markdown to html(use with --output)")
-	ChatCmd.Flags().StringP("output", "o", "", "output file(markdown or html like test.md or test.html or just text like `test` file)")
-	ChatCmd.Flags().BoolP("without-term", "w", false, "if output set will be write response to file without terminal")
-	ChatCmd.Flags().StringP("endpoint", "e", "", "set endpoint for create conversation(if the default one doesn't suit you)")
-	ChatCmd.Flags().StringP("style", "s", "balanced", "set conversation style(creative, balanced, precise)")
+	ChatCmd.Flags().BoolVarP(&r, "rich", "r", false, "parse markdown to terminal")
+	ChatCmd.Flags().BoolVarP(&toHtml, "html", "", false, "parse markdown to html(use with --output)")
+	ChatCmd.Flags().StringVarP(&output, "output", "o", "", "output file(markdown or html like test.md or test.html or just text like `test` file)")
+	ChatCmd.Flags().BoolVarP(&withoutTerminal, "without-term", "w", false, "if output set will be write response to file without terminal")
+	ChatCmd.Flags().StringVarP(&endpoint, "endpoint", "e", "", "set endpoint for create conversation(if the default one doesn't suit you)")
+	ChatCmd.Flags().StringVarP(&style, "style", "s", "balanced", "set conversation style(creative, balanced, precise)")
 }
 
 func runChat(cmd *cobra.Command, args []string) {
 	initLoggerWithStorage("Chat")
-	getFlags(cmd)
+	setConversationEndpoint()
 	newChat("chat")
 
 	reader := bufio.NewReader(os.Stdin)
@@ -59,39 +59,6 @@ func runChat(cmd *cobra.Command, args []string) {
 
 		ask(input)
 	}
-}
-
-func getFlags(cmd *cobra.Command) {
-	rich, err := cmd.Flags().GetBool("rich")
-	flagCheckError("rich", err)
-
-	r = rich
-
-	tohtml, err := cmd.Flags().GetBool("html")
-	flagCheckError("html", err)
-
-	toHtml = tohtml
-
-	out, err := cmd.Flags().GetString("output")
-	flagCheckError("output", err)
-
-	output = out
-
-	wt, err := cmd.Flags().GetBool("without-term")
-	flagCheckError("without-term", err)
-
-	withoutTerminal = wt
-
-	s, err := cmd.Flags().GetString("style")
-	flagCheckError("style", err)
-
-	style = s
-
-	e, err := cmd.Flags().GetString("endpoint")
-	flagCheckError("endpoint", err)
-
-	endpoint = e
-	setConversationEndpoint()
 }
 
 func newChat(key string) {
