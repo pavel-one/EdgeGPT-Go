@@ -1,10 +1,25 @@
 package Logger
 
-import "go.uber.org/zap"
+import (
+	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
+	"go.uber.org/zap"
+	"os"
+)
 
 func NewLogger(channel string) *zap.SugaredLogger {
-	logger, _ := zap.NewDevelopment()
-	logger = logger.With(zap.String("channel", channel))
+	cfg := zap.NewProductionConfig()
 
-	return logger.Sugar()
+	if Helpers.FindInSlice(os.Args, "chat") {
+		cfg.OutputPaths = []string{
+			"logs/app.log",
+		}
+		cfg.ErrorOutputPaths = []string{
+			"logs/err.log",
+		}
+	}
+
+	logger, _ := cfg.Build()
+	sugar := logger.Sugar()
+
+	return sugar.Named(channel)
 }

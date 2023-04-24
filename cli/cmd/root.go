@@ -21,7 +21,9 @@ var endpoint string
 var rootCmd = &cobra.Command{
 	Use:   "EdgeGPT-Go",
 	Short: "CLI for using Edge Bing",
-	Long:  "Cli for using Edge Bing. Available commands:\nChat - for speaking with Bing\ngRPC - start gRPC server for speaking with Bing",
+	Long: "Cli for using Edge Bing. Available commands:\n" +
+		"chat - for speaking with Bing\n" +
+		"gRPC - start gRPC server for speaking with Bing",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(cmd.Long)
 	},
