@@ -11,6 +11,7 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 - [x] Sync/Async request
 - [ ] CLI interface
 - [ ] Refresh session
+- [ ] io.Reader for answer
 
 ## How to use it:
 
