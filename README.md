@@ -9,9 +9,8 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 - [x] GRPC interface
 - [x] Library interface
 - [x] Sync/Async request
-- [ ] CLI interface
-- [ ] Refresh session
-- [ ] io.Reader for answer
+- [x] CLI interface
+- [x] Refresh session
 
 ## How to use it:
 

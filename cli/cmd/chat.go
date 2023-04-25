@@ -3,11 +3,10 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	term_markdown "github.com/MichaelMure/go-term-markdown"
+	md "github.com/MichaelMure/go-term-markdown"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/gosuri/uilive"
 	"github.com/pavel-one/EdgeGPT-Go"
 	"github.com/spf13/cobra"
 	"os"
@@ -86,6 +85,8 @@ func ask(input string) {
 }
 
 func base(input string) {
+	fmt.Println("Bot:")
+
 	var l int
 
 	mw, err := chat.AskAsync(style, input)
@@ -120,68 +121,22 @@ func base(input string) {
 }
 
 func rich(input string) {
-	var l int
+	fmt.Println("Bot:")
 
-	mw, err := chat.AskAsync(style, input)
-	if err != nil {
-		logger.Fatalln(err)
+	ans := getAnswer(input)
+
+	go writeWithFlags([]byte(ans))
+
+	result := md.Render(ans, 999, 0)
+
+	if result == nil {
+		fmt.Println(ans)
+		return
 	}
 
-	go mw.Worker()
-
-	writer := uilive.New()
-	writer.Start()
-	out := ""
-
-	for range mw.Chan {
-		var res string
-		ans := mw.Answer.GetAnswer()
-
-		anslen := len(ans)
-
-		if anslen == 0 {
-			continue
-		}
-
-		if l == 0 {
-			res = ans
-		} else if 0 < l && l < anslen {
-			res = ans[l:]
-		}
-		l = anslen
-
-		if res == "" {
-			continue
-		}
-		out += res
-
-		md := renderMarkdown(out)
-
-		if md == "" {
-			continue
-		}
-
-		writer.Write([]byte(md))
-		//fmt.Fprint(writer, )
-	}
-	writer.Stop()
-
-	go writeWithFlags([]byte(mw.Answer.GetAnswer()))
+	fmt.Print(string(result))
 
 	return
-}
-
-func renderMarkdown(val string) string {
-	result := term_markdown.Render(val, 999, 0)
-	if result == nil {
-		return ""
-	}
-
-	if result[len(result)-1] == byte(10) {
-		result = result[:len(result)-1]
-	}
-
-	return string(result)
 }
 
 func getAnswer(input string) string {
