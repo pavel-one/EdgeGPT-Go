@@ -20,8 +20,9 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 ## How to use it:
 
 ### Getting authentication (Required)
-- Install the cookie editor extension for [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) or [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/)
-- Go to `bing.com` and login
+- Install Microsoft Edge browser
+- Install [Cookie-Editor](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) extension
+- Go to [New Bing](https://www.bing.com/search?form=MY0291&OCID=MY0291&q=Bing+AI&showconv=1&cc=au) login and getting access
 - Open the extension
 - Click "Export" on the bottom right, then "Export as JSON" (This saves your cookies to clipboard)
 - Create folder `cookies`
