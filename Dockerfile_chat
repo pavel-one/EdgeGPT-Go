@@ -10,6 +10,7 @@ RUN go mod download
 RUN go build -o /tmp/build cli/main.go
 
 RUN rm -rf *
+RUN go clean -modcache
 
 RUN mv /tmp/build /app/build
 
