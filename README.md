@@ -111,11 +111,11 @@ If you change protoc file, use `protoc --go_out=. --go-grpc_out=. proto/gpt.prot
 #### Stopped after 10 redirects
 If you use this library in China set environment: 
 ```shell
-CONVERSATION_ENDPOINT='https://edge.churchless.tech/edgesvc/turing/conversation/create'
+CONVERSATION_ENDPOINT=https://edge.churchless.tech/edgesvc/turing/conversation/create
 ``` 
 Example:
 ```shell
-docker run -e CONVERSATION_ENDPOINT='https://edge.churchless.tech/edgesvc/turing/conversation/create' -v ./cookies:/app/cookies -p 8080:8080 ghcr.io/pavel-one/edgegpt-grpc:latest
+docker run -e CONVERSATION_ENDPOINT=https://edge.churchless.tech/edgesvc/turing/conversation/create -v ./cookies:/app/cookies -p 8080:8080 ghcr.io/pavel-one/edgegpt-grpc:latest
 ```
 Or docker-compose:
 ```yaml
@@ -125,7 +125,7 @@ services:
     image: ghcr.io/pavel-one/edgegpt-grpc:latest
     restart: unless-stopped
     environment:
-      - CONVERSATION_ENDPOINT='https://edge.churchless.tech/edgesvc/turing/conversation/create'
+      - CONVERSATION_ENDPOINT=https://edge.churchless.tech/edgesvc/turing/conversation/create
     ports:
       - "8080:8080"
     volumes:
