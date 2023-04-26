@@ -18,9 +18,9 @@ import (
 var log = Logger.NewLogger("GPT Service")
 
 const (
-	StyleCreative = "h3relaxedimg"
+	StyleCreative = "h3imaginative,clgalileo,gencontentv3"
 	StyleBalanced = "galileo"
-	StylePrecise  = "h3precise"
+	StylePrecise  = "h3precise,clgalileo"
 	DelimiterByte = uint8(30)
 	Delimiter     = "\x1e"
 )
