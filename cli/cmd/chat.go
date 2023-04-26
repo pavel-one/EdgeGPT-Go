@@ -127,7 +127,7 @@ func rich(input string) {
 
 	go writeWithFlags([]byte(ans))
 
-	result := md.Render(ans, 999, 0)
+	result := md.Render(ans, 999, 2)
 
 	if result == nil {
 		fmt.Println(ans)
@@ -146,9 +146,7 @@ func getAnswer(input string) string {
 	}
 
 	ans := mw.Answer.GetAnswer()
-	if ans == "" {
-		logger.Fatalf("failed to get answer")
-	}
+	ans += fmt.Sprintf("\n*%d of %d answers*", mw.Answer.GetUserUnit(), mw.Answer.GetMaxUnit())
 
 	return ans
 }

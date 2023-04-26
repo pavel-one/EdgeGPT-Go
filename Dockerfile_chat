@@ -13,4 +13,6 @@ RUN rm -rf *
 
 RUN mv /tmp/build /app/build
 
-CMD ["/app/build chat --rich"]
+RUN mkdir /app/logs
+
+CMD ["/app/build", "chat", "--rich"]

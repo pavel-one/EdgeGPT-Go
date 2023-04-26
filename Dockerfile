@@ -13,4 +13,4 @@ RUN rm -rf *
 
 RUN mv /tmp/build /app/build
 
-CMD ["/app/build grpc"]
+CMD ["/app/build", "gRPC"]
