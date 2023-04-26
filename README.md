@@ -20,7 +20,7 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 ## How to use it:
 
 ### Getting authentication (Required)
-- Install Microsoft Edge browser
+- Install and open Microsoft Edge browser
 - Install [Cookie-Editor](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) extension
 - Go to [New Bing](https://www.bing.com/search?form=MY0291&OCID=MY0291&q=Bing+AI&showconv=1&cc=au) login and getting access
 - Open the extension
