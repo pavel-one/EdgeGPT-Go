@@ -68,6 +68,15 @@ func (c *Hub) getRequest(style, message string) map[string]any {
 	case "precise":
 		style = StylePrecise
 		break
+	case StyleCreative:
+		style = StyleCreative
+		break
+	case StyleBalanced:
+		style = StyleBalanced
+		break
+	case StylePrecise:
+		style = StylePrecise
+		break
 	default:
 		style = StyleBalanced
 	}
