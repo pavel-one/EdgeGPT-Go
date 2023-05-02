@@ -2,9 +2,7 @@ package EdgeGPT
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"github.com/pavel-one/EdgeGPT-Go/config"
 	"github.com/pavel-one/EdgeGPT-Go/internal/CookieManager"
 	"github.com/pavel-one/EdgeGPT-Go/internal/Helpers"
@@ -54,7 +52,7 @@ func NewGPT(conf *config.GPT) (*GPT, error) {
 		return nil, err
 	}
 
-	hub, err := gpt.createHub()
+	hub, err := NewHub(gpt.Conversation, conf)
 	if err != nil {
 		return nil, err
 	}
@@ -162,28 +160,4 @@ func (g *GPT) AskSync(style, message string) (*responses.MessageWrapper, error) 
 
 	log.Infoln("New ask:", message)
 	return m, nil
-}
-
-// createHub create websocket hub
-func (g *GPT) createHub() (*Hub, error) {
-	if g.Conversation == nil {
-		return nil, errors.New("not set conversation")
-	}
-
-	conn, _, err := websocket.DefaultDialer.Dial(g.Config.WssUrl.String(), Helpers.GetHeaders(g.Config.Headers))
-	if err != nil {
-		return nil, err
-	}
-
-	h := &Hub{
-		conversation: g.Conversation,
-		conn:         conn,
-	}
-
-	if err := h.initialHandshake(); err != nil {
-		return nil, err
-	}
-
-	log.Infoln("New hub for conversation:", g.Conversation.ConversationId)
-	return h, nil
 }
