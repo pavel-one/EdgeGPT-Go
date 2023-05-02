@@ -1,4 +1,5 @@
 ## 🪄 EdgeGPT-Go
+
 ![Go version](https://img.shields.io/github/go-mod/go-version/pavel-one/EdgeGPT-GO)
 [![Release](https://img.shields.io/github/v/release/pavel-one/EdgeGPT-GO)](https://github.com/pavel-one/EdgeGPT-Go/releases)
 [![Go Reference](https://pkg.go.dev/badge/github.com/pavel-one/EdgeGPT-Go.svg)](https://pkg.go.dev/github.com/pavel-one/EdgeGPT-Go)
@@ -11,6 +12,7 @@ You can use it as a library, microservice or standalone cli application.
 The package supports multiple cookies. As well as rapid deployment as a microservice via docker.
 
 ## Feature:
+
 - [x] GRPC interface
 - [x] Library interface
 - [x] Sync/Async request
@@ -20,9 +22,12 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 ## How to use it:
 
 ### Getting authentication (Required)
+
 - Install and open Microsoft Edge browser
-- Install [Cookie-Editor](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm) extension
-- Go to [New Bing](https://www.bing.com/search?form=MY0291&OCID=MY0291&q=Bing+AI&showconv=1&cc=au) login and getting access
+- Install [Cookie-Editor](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm)
+  extension
+- Go to [New Bing](https://www.bing.com/search?form=MY0291&OCID=MY0291&q=Bing+AI&showconv=1&cc=au) login and getting
+  access
 - Open the extension
 - Click "Export" on the bottom right, then "Export as JSON" (This saves your cookies to clipboard)
 - Create folder `cookies`
@@ -31,11 +36,15 @@ The package supports multiple cookies. As well as rapid deployment as a microser
 If you have several accounts - repeat for each of them and save to the `cookies` folder
 
 ### Use as a chat cli app
+
 ```shell
 docker run -it -v ./cookies:/app/cookies ghcr.io/pavel-one/edgegpt-chat
 ```
+
 Or download binary in [release page](https://github.com/pavel-one/EdgeGPT-Go/releases)
+
 ### Use as a library
+
 ```shell
 go get github.com/pavel-one/EdgeGPT-Go
 ```
@@ -84,11 +93,13 @@ func main() {
 ```
 
 ### Use as a docker microservice
+
 ```shell
 docker run -v ./cookies:/app/cookies -p 8080:8080 ghcr.io/pavel-one/edgegpt-grpc:latest
 ```
 
 ### Use as a docker-compose
+
 ```yaml
 version: "3"
 services:
@@ -101,24 +112,40 @@ services:
       - ./cookies:/app/cookies
 ```
 
+## Available environment
+
+| Name                    | Default                                                            | Description                                                                                                                                   |
+|-------------------------|--------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| `CONVERSATION_ENDPOINT` | `https://edgeservices.bing.com/edgesvc/turing/conversation/create` | Endpoint for getting<br />conversation                                                                                                        |
+| `LOG_LEVEL`             | `INFO`                                                             | Log level. Avalible:<br /><ul><li>`DEBUG`</li><li>`INFO`</li><li>`WARN`</li><li>`ERROR`</li><li>`DPANIC`</li><li>`PANIC`</li><li>`FATAL`</li> |
+|                         |                                                                    |                                                                                                                                               |
+
 ## Example service
+
 Work progress...
 
 ## FAQ:
 
 #### Change protoc
+
 If you change protoc file, use `protoc --go_out=. --go-grpc_out=. proto/gpt.proto`
 
 #### Stopped after 10 redirects
-If you use this library in China set environment: 
+
+If you use this library in China set environment:
+
 ```shell
 CONVERSATION_ENDPOINT=https://edge.churchless.tech/edgesvc/turing/conversation/create
 ``` 
+
 Example:
+
 ```shell
 docker run -e CONVERSATION_ENDPOINT=https://edge.churchless.tech/edgesvc/turing/conversation/create -v ./cookies:/app/cookies -p 8080:8080 ghcr.io/pavel-one/edgegpt-grpc:latest
 ```
+
 Or docker-compose:
+
 ```yaml
 version: "3"
 services:
