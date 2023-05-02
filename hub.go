@@ -68,15 +68,17 @@ func (h *Hub) CheckAndReconnect() error {
 	}
 
 	if err := h.conn.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+		log.Infoln("Reconnection")
+
 		h.Close()
 		h.conn = nil
-	}
 
-	conn, err := h.NewConnect()
-	if err != nil {
-		return err
+		conn, err := h.NewConnect()
+		if err != nil {
+			return err
+		}
+		h.conn = conn
 	}
-	h.conn = conn
 
 	return nil
 }
@@ -113,6 +115,7 @@ func (h *Hub) Close() {
 		return
 	}
 
+	log.Infoln("Close connection")
 	h.conn.Close()
 }
 
